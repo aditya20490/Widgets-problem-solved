@@ -2,518 +2,1776 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JEE Study Timer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>JEE Stream Builder</title>
 
 <style>
-    * {
-        box-sizing: border-box;
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background: #0b0d12;
+    color: #ffffff;
+}
+
+/* =========================
+   BUILDER
+========================= */
+
+#builder {
+    min-height: 100vh;
+    padding: 18px;
+}
+
+.header {
+    max-width: 1100px;
+    margin: 0 auto 18px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 30px;
+    letter-spacing: -0.5px;
+}
+
+.header p {
+    margin: 6px 0 0;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.main {
+    max-width: 1100px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 18px;
+}
+
+.panel {
+    background: #151922;
+    border: 1px solid #252b38;
+    border-radius: 18px;
+    padding: 16px;
+}
+
+.panel h2 {
+    margin: 0 0 14px;
+    font-size: 18px;
+}
+
+.add-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+button {
+    border: 0;
+    border-radius: 10px;
+    padding: 12px 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.add-btn {
+    background: #242b38;
+    color: white;
+}
+
+.add-btn:hover {
+    background: #303949;
+}
+
+.widget-card {
+    background: #0f131b;
+    border: 1px solid #293140;
+    border-radius: 14px;
+    padding: 13px;
+    margin-bottom: 10px;
+}
+
+.widget-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.widget-name {
+    font-weight: 700;
+}
+
+.widget-type {
+    color: #8b95a7;
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.card-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.small-btn {
+    padding: 7px 9px;
+    font-size: 12px;
+    background: #252c39;
+    color: white;
+}
+
+.delete-btn {
+    background: #442326;
+}
+
+.field {
+    margin-bottom: 12px;
+}
+
+.field label {
+    display: block;
+    color: #aeb7c7;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+input,
+select {
+    width: 100%;
+    background: #0d1118;
+    color: white;
+    border: 1px solid #303847;
+    border-radius: 9px;
+    padding: 11px;
+    font-size: 14px;
+    outline: none;
+}
+
+input:focus,
+select:focus {
+    border-color: #5d8cff;
+}
+
+input[type="color"] {
+    padding: 4px;
+    height: 42px;
+}
+
+.checkbox-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #cbd2df;
+    font-size: 13px;
+}
+
+.checkbox input {
+    width: auto;
+}
+
+.editor {
+    border-top: 1px solid #252b38;
+    margin-top: 14px;
+    padding-top: 14px;
+}
+
+.primary {
+    background: #2878ff;
+    color: white;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.success {
+    background: #18a957;
+    color: white;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.reset {
+    background: #3a404c;
+    color: white;
+    width: 100%;
+    margin-top: 8px;
+}
+
+.notice {
+    background: #101a2c;
+    border: 1px solid #263b61;
+    color: #b9d0ff;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-top: 12px;
+}
+
+/* =========================
+   PREVIEW
+========================= */
+
+.preview-panel {
+    min-height: 600px;
+}
+
+.preview-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.preview-title span {
+    color: #8e98aa;
+    font-size: 12px;
+}
+
+.preview {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(135deg, #202735, #11151d);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #303847;
+}
+
+.preview::after {
+    content: "STREAM PREVIEW";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: rgba(255,255,255,0.10);
+    font-size: clamp(20px, 4vw, 42px);
+    font-weight: 800;
+    pointer-events: none;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.widget-render {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    text-align: center;
+    font-weight: 700;
+    color: white;
+    line-height: 1.05;
+    text-shadow:
+        0 2px 4px rgba(0,0,0,.9),
+        0 5px 16px rgba(0,0,0,.7);
+    z-index: 2;
+}
+
+/* =========================
+   PRISM OVERLAY MODE
+========================= */
+
+body.overlay-mode {
+    background: transparent !important;
+    overflow: hidden;
+}
+
+body.overlay-mode #builder {
+    display: none;
+}
+
+#overlayRoot {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    overflow: hidden;
+}
+
+body.overlay-mode #overlayRoot {
+    display: block;
+}
+
+.overlay-widget {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    text-align: center;
+    line-height: 1.05;
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+
+    text-shadow:
+        0 2px 4px rgba(0,0,0,.85),
+        0 4px 14px rgba(0,0,0,.65);
+}
+
+@media (max-width: 800px) {
+    .main {
+        grid-template-columns: 1fr;
     }
 
-    html, body {
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        background: transparent;
-        font-family: Arial, Helvetica, sans-serif;
-        color: white;
+    .preview-panel {
+        min-height: auto;
     }
-
-    body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* ---------- TIMER ---------- */
-
-    #overlay {
-        text-align: center;
-        padding: 20px;
-        user-select: none;
-    }
-
-    #title {
-        font-size: 28px;
-        font-weight: 700;
-        letter-spacing: 2px;
-        margin-bottom: 8px;
-        text-shadow: 0 2px 8px rgba(0,0,0,.8);
-    }
-
-    #schedule {
-        font-size: 16px;
-        opacity: .85;
-        margin-bottom: 20px;
-        text-shadow: 0 2px 8px rgba(0,0,0,.8);
-    }
-
-    #timer {
-        font-size: 76px;
-        line-height: 1;
-        font-weight: 800;
-        letter-spacing: 3px;
-        text-shadow: 0 3px 12px rgba(0,0,0,.9);
-    }
-
-    #mode {
-        margin-top: 10px;
-        font-size: 20px;
-        font-weight: 700;
-        letter-spacing: 2px;
-        text-shadow: 0 2px 8px rgba(0,0,0,.8);
-    }
-
-    #session {
-        margin-top: 8px;
-        font-size: 15px;
-        opacity: .8;
-        text-shadow: 0 2px 8px rgba(0,0,0,.8);
-    }
-
-    #elapsed {
-        margin-top: 15px;
-        font-size: 16px;
-        opacity: .85;
-        text-shadow: 0 2px 8px rgba(0,0,0,.8);
-    }
-
-    /* ---------- SETTINGS ---------- */
-
-    #settingsButton {
-        position: fixed;
-        top: 15px;
-        right: 15px;
-        width: 42px;
-        height: 42px;
-        border: none;
-        border-radius: 50%;
-        background: rgba(0,0,0,.65);
-        color: white;
-        font-size: 21px;
-        cursor: pointer;
-    }
-
-    #settings {
-        display: none;
-        position: fixed;
-        top: 65px;
-        right: 15px;
-        width: 300px;
-        max-height: 85vh;
-        overflow-y: auto;
-        padding: 20px;
-        background: rgba(20,20,20,.96);
-        border-radius: 14px;
-        box-shadow: 0 10px 40px rgba(0,0,0,.6);
-    }
-
-    #settings.open {
-        display: block;
-    }
-
-    h2 {
-        margin-top: 0;
-    }
-
-    label {
-        display: block;
-        margin-top: 13px;
-        margin-bottom: 5px;
-        font-size: 13px;
-        opacity: .85;
-    }
-
-    input, select {
-        width: 100%;
-        padding: 9px;
-        border-radius: 7px;
-        border: 1px solid #555;
-        background: #222;
-        color: white;
-    }
-
-    .buttons {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin-top: 18px;
-    }
-
-    button.action {
-        padding: 10px;
-        border: none;
-        border-radius: 7px;
-        cursor: pointer;
-        font-weight: 700;
-    }
-
-    #startBtn {
-        background: #35c759;
-        color: white;
-    }
-
-    #pauseBtn {
-        background: #ff9f0a;
-        color: white;
-    }
-
-    #resetBtn {
-        background: #ff453a;
-        color: white;
-    }
-
-    #saveBtn {
-        background: #0a84ff;
-        color: white;
-    }
+}
 </style>
 </head>
 
 <body>
 
-<div id="overlay">
+<div id="builder">
 
-    <div id="title">JEE STUDY WITH ME</div>
-
-    <div id="schedule">
-        06:30 AM — 12:30 PM
+    <div class="header">
+        <h1>JEE Stream Builder</h1>
+        <p>Create your PRISM livestream overlay.</p>
     </div>
 
-    <div id="timer">25:00</div>
+    <div class="main">
 
-    <div id="mode">STUDY</div>
+        <div class="panel">
 
-    <div id="session">
-        SESSION 1
+            <h2>Add Widget</h2>
+
+            <div class="add-buttons">
+
+                <button class="add-btn" onclick="addWidget('timer')">
+                    + TIMER
+                </button>
+
+                <button class="add-btn" onclick="addWidget('countdown')">
+                    + COUNTDOWN
+                </button>
+
+                <button class="add-btn" onclick="addWidget('text')">
+                    + TEXT
+                </button>
+
+            </div>
+
+            <h2>Your Widgets</h2>
+
+            <div id="widgetList"></div>
+
+            <div id="editor"></div>
+
+            <button class="primary" onclick="applyChanges()">
+                APPLY CHANGES
+            </button>
+
+            <button class="success" onclick="copyPrismURL()">
+                COPY PRISM URL
+            </button>
+
+            <button class="reset" onclick="resetAll()">
+                CLEAR ALL WIDGETS
+            </button>
+
+            <div class="notice">
+                Configure your widgets, apply your changes,
+                then copy the PRISM URL.
+            </div>
+
+        </div>
+
+        <div class="panel preview-panel">
+
+            <div class="preview-title">
+                <h2>Live Preview</h2>
+                <span>16:9</span>
+            </div>
+
+            <div class="preview">
+                <div id="previewOverlay" class="overlay"></div>
+            </div>
+
+        </div>
+
     </div>
-
-    <div id="elapsed">
-        STUDY TIME: 00:00:00
-    </div>
-
 </div>
 
 
-<button id="settingsButton">⚙</button>
-
-
-<div id="settings">
-
-    <h2>Timer Settings</h2>
-
-    <label>Title</label>
-    <input id="titleInput" value="JEE STUDY WITH ME">
-
-    <label>Schedule</label>
-    <input id="scheduleInput" value="06:30 AM — 12:30 PM">
-
-    <label>Study minutes</label>
-    <input id="studyInput" type="number" min="1" value="25">
-
-    <label>Break minutes</label>
-    <input id="breakInput" type="number" min="1" value="5">
-
-    <label>Mode</label>
-    <select id="modeInput">
-        <option value="manual">Manual</option>
-        <option value="pomodoro">Automatic Pomodoro</option>
-    </select>
-
-    <label>Timer font size</label>
-    <input id="fontInput" type="number" min="20" max="200" value="76">
-
-    <label>Timer color</label>
-    <input id="colorInput" type="color" value="#ffffff">
-
-    <div class="buttons">
-        <button class="action" id="startBtn">START</button>
-        <button class="action" id="pauseBtn">PAUSE</button>
-        <button class="action" id="resetBtn">RESET</button>
-        <button class="action" id="saveBtn">SAVE</button>
-    </div>
-
-</div>
+<div id="overlayRoot"></div>
 
 
 <script>
 
-let studyMinutes = 25;
-let breakMinutes = 5;
+/* =========================
+   DATA
+========================= */
 
-let remainingSeconds = studyMinutes * 60;
+let widgets = [];
+let selectedId = null;
 
-let mode = "STUDY";
-let session = 1;
-
-let running = false;
-let interval = null;
-
-let elapsedStudySeconds = 0;
-
-
-/* ---------- ELEMENTS ---------- */
-
-const timer = document.getElementById("timer");
-const modeText = document.getElementById("mode");
-const sessionText = document.getElementById("session");
-const elapsedText = document.getElementById("elapsed");
-
-const title = document.getElementById("title");
-const schedule = document.getElementById("schedule");
+const fonts = [
+    "Arial",
+    "Helvetica",
+    "Verdana",
+    "Trebuchet MS",
+    "Georgia",
+    "Times New Roman",
+    "Courier New",
+    "Impact"
+];
 
 
-/* ---------- FORMAT TIME ---------- */
+/* =========================
+   HELPERS
+========================= */
 
-function formatTime(seconds) {
+function makeId() {
+    return Date.now().toString(36) +
+           Math.random().toString(36).slice(2, 7);
+}
 
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = seconds % 60;
-
-    if (h > 0) {
-        return String(h).padStart(2,"0") + ":" +
-               String(m).padStart(2,"0") + ":" +
-               String(s).padStart(2,"0");
-    }
-
-    return String(m).padStart(2,"0") + ":" +
-           String(s).padStart(2,"0");
+function escapeHTML(value) {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
-/* ---------- UPDATE DISPLAY ---------- */
+/* =========================
+   DEFAULT WIDGETS
+========================= */
 
-function updateDisplay() {
+function defaultWidget(type) {
 
-    timer.textContent = formatTime(remainingSeconds);
+    if (type === "timer") {
 
-    modeText.textContent = mode;
+        return {
+            id: makeId(),
+            type: "timer",
+            name: "Timer",
+            mode: "countdown",
 
-    sessionText.textContent = "SESSION " + session;
+            hours: 0,
+            minutes: 25,
+            seconds: 0,
 
-    elapsedText.textContent =
-        "STUDY TIME: " + formatTime(elapsedStudySeconds);
+            showHours: false,
+            showMinutes: true,
+            showSeconds: true,
 
+            font: "Arial",
+            size: 64,
+            color: "#ffffff",
+
+            x: 50,
+            y: 50,
+
+            running: false,
+            remaining: 1500
+        };
+    }
+
+    if (type === "countdown") {
+
+        return {
+            id: makeId(),
+            type: "countdown",
+            name: "Countdown",
+
+            days: 0,
+            hours: 0,
+            minutes: 10,
+            seconds: 0,
+
+            showDays: false,
+            showHours: true,
+            showMinutes: true,
+            showSeconds: true,
+
+            font: "Arial",
+            size: 54,
+            color: "#ffffff",
+
+            x: 50,
+            y: 50,
+
+            running: false,
+            remaining: 600
+        };
+    }
+
+    return {
+        id: makeId(),
+        type: "text",
+        name: "Text",
+        text: "HELLO EVERYONE",
+
+        font: "Arial",
+        size: 42,
+        color: "#ffffff",
+
+        x: 50,
+        y: 50
+    };
 }
 
 
-/* ---------- TIMER LOOP ---------- */
+/* =========================
+   ADD / DELETE / EDIT
+========================= */
 
-function tick() {
+function addWidget(type) {
 
-    if (!running) return;
+    const widget = defaultWidget(type);
 
-    remainingSeconds--;
+    widgets.push(widget);
 
-    if (mode === "STUDY") {
-        elapsedStudySeconds++;
+    selectedId = widget.id;
+
+    renderBuilder();
+}
+
+function deleteWidget(widgetId) {
+
+    widgets =
+        widgets.filter(widget => widget.id !== widgetId);
+
+    if (selectedId === widgetId) {
+
+        selectedId =
+            widgets.length
+            ? widgets[0].id
+            : null;
     }
 
-    if (remainingSeconds <= 0) {
+    renderBuilder();
+}
 
-        if (mode === "STUDY") {
+function editWidget(widgetId) {
 
-            mode = "BREAK";
-            remainingSeconds = breakMinutes * 60;
+    selectedId = widgetId;
 
-        } else {
+    renderBuilder();
+}
 
-            mode = "STUDY";
-            session++;
-            remainingSeconds = studyMinutes * 60;
 
+/* =========================
+   BUILDER
+========================= */
+
+function renderBuilder() {
+
+    const list =
+        document.getElementById("widgetList");
+
+    if (!widgets.length) {
+
+        list.innerHTML = `
+            <div style="
+                color:#7f899a;
+                font-size:13px;
+                padding:10px 0;
+            ">
+                No widgets yet.<br>
+                Add a Timer, Countdown or Text widget.
+            </div>
+        `;
+
+    } else {
+
+        list.innerHTML =
+            widgets.map(widget => {
+
+                const label =
+                    widget.type === "timer"
+                    ? "TIMER"
+                    : widget.type === "countdown"
+                    ? "COUNTDOWN"
+                    : "TEXT";
+
+                return `
+                    <div class="widget-card">
+
+                        <div class="widget-top">
+
+                            <div>
+
+                                <div class="widget-name">
+                                    ${escapeHTML(widget.name)}
+                                </div>
+
+                                <div class="widget-type">
+                                    ${label}
+                                </div>
+
+                            </div>
+
+                            <div class="card-actions">
+
+                                <button
+                                    class="small-btn"
+                                    onclick="editWidget('${widget.id}')">
+                                    EDIT
+                                </button>
+
+                                <button
+                                    class="small-btn delete-btn"
+                                    onclick="deleteWidget('${widget.id}')">
+                                    DELETE
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                `;
+
+            }).join("");
+    }
+
+    renderEditor();
+    renderPreview();
+}
+
+
+/* =========================
+   EDITOR
+========================= */
+
+function renderEditor() {
+
+    const box =
+        document.getElementById("editor");
+
+    const widget =
+        widgets.find(item => item.id === selectedId);
+
+    if (!widget) {
+
+        box.innerHTML = "";
+
+        return;
+    }
+
+    let html = `
+        <div class="editor">
+
+            <h2>
+                Customize ${widget.type.toUpperCase()}
+            </h2>
+
+            <div class="field">
+
+                <label>Widget name</label>
+
+                <input
+                    value="${escapeHTML(widget.name)}"
+                    oninput="updateWidget('name', this.value)">
+
+            </div>
+    `;
+
+
+    /* TIMER */
+
+    if (widget.type === "timer") {
+
+        html += `
+
+            <div class="field">
+
+                <label>Timer type</label>
+
+                <select
+                    onchange="updateWidget('mode', this.value)">
+
+                    <option
+                        value="countdown"
+                        ${widget.mode === "countdown"
+                            ? "selected"
+                            : ""}>
+                        Countdown
+                    </option>
+
+                    <option
+                        value="countup"
+                        ${widget.mode === "countup"
+                            ? "selected"
+                            : ""}>
+                        Stopwatch / Count Up
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="field">
+
+                <label>Hours</label>
+
+                <input
+                    type="number"
+                    min="0"
+                    value="${widget.hours}"
+                    oninput="
+                        updateWidget(
+                            'hours',
+                            Number(this.value)
+                        )
+                    ">
+
+            </div>
+
+            <div class="field">
+
+                <label>Minutes</label>
+
+                <input
+                    type="number"
+                    min="0"
+                    value="${widget.minutes}"
+                    oninput="
+                        updateWidget(
+                            'minutes',
+                            Number(this.value)
+                        )
+                    ">
+
+            </div>
+
+            <div class="field">
+
+                <label>Seconds</label>
+
+                <input
+                    type="number"
+                    min="0"
+                    max="59"
+                    value="${widget.seconds}"
+                    oninput="
+                        updateWidget(
+                            'seconds',
+                            Number(this.value)
+                        )
+                    ">
+
+            </div>
+
+            <div class="field">
+
+                <label>Display</label>
+
+                <div class="checkbox-row">
+
+                    <label class="checkbox">
+
+                        <input
+                            type="checkbox"
+                            ${widget.showHours
+                                ? "checked"
+                                : ""}
+                            onchange="
+                                updateWidget(
+                                    'showHours',
+                                    this.checked
+                                )
+                            ">
+
+                        Hours
+
+                    </label>
+
+                    <label class="checkbox">
+
+                        <input
+                            type="checkbox"
+                            ${widget.showMinutes
+                                ? "checked"
+                                : ""}
+                            onchange="
+                                updateWidget(
+                                    'showMinutes',
+                                    this.checked
+                                )
+                            ">
+
+                        Minutes
+
+                    </label>
+
+                    <label class="checkbox">
+
+                        <input
+                            type="checkbox"
+                            ${widget.showSeconds
+                                ? "checked"
+                                : ""}
+                            onchange="
+                                updateWidget(
+                                    'showSeconds',
+                                    this.checked
+                                )
+                            ">
+
+                        Seconds
+
+                    </label>
+
+                </div>
+
+            </div>
+
+            <button
+                class="success"
+                onclick="startSelectedTimer()">
+
+                START
+
+            </button>
+
+            <button
+                class="small-btn"
+                style="width:100%;margin-top:8px;"
+                onclick="pauseSelectedTimer()">
+
+                PAUSE
+
+            </button>
+
+            <button
+                class="small-btn"
+                style="width:100%;margin-top:8px;"
+                onclick="resetSelectedTimer()">
+
+                RESET
+
+            </button>
+        `;
+    }
+
+
+    /* COUNTDOWN */
+
+    if (widget.type === "countdown") {
+
+        html += `
+
+            <div class="field">
+
+                <label>Days</label>
+
+                <input
+                    type="number"
+                    min="0"
+                    value="${widget.days}"
+                    oninput="
+                        updateWidget(
+                            'days',
+                            Number(this.value)
+                        )
+                    ">
+
+            </div>
+
+            <div class="field">
+
+                <label>Hours</label>
+
+                <input
+                    type="number"
+                    min="0"
+                    value="${widget.hours}"
+                    oninput="
+                        updateWidget(
+                            'hours',
+                            Number(this.value)
+                        )
+                    ">
+
+            </div>
+
+            <div class="field">
+
+                <label>Minutes</label>
+
+                <input
+                    type="number"
+                    min="0"
+                    value="${widget.minutes}"
+                    oninput="
+                        updateWidget(
+                            'minutes',
+                            Number(this.value)
+                        )
+                    ">
+
+            </div>
+
+            <div class="field">
+
+                <label>Seconds</label>
+
+                <input
+                    type="number"
+                    min="0"
+                    max="59"
+                    value="${widget.seconds}"
+                    oninput="
+                        updateWidget(
+                            'seconds',
+                            Number(this.value)
+                        )
+                    ">
+
+            </div>
+
+            <div class="field">
+
+                <label>Display</label>
+
+                <div class="checkbox-row">
+
+                    <label class="checkbox">
+
+                        <input
+                            type="checkbox"
+                            ${widget.showDays
+                                ? "checked"
+                                : ""}
+                            onchange="
+                                updateWidget(
+                                    'showDays',
+                                    this.checked
+                                )
+                            ">
+
+                        Days
+
+                    </label>
+
+                    <label class="checkbox">
+
+                        <input
+                            type="checkbox"
+                            ${widget.showHours
+                                ? "checked"
+                                : ""}
+                            onchange="
+                                updateWidget(
+                                    'showHours',
+                                    this.checked
+                                )
+                            ">
+
+                        Hours
+
+                    </label>
+
+                    <label class="checkbox">
+
+                        <input
+                            type="checkbox"
+                            ${widget.showMinutes
+                                ? "checked"
+                                : ""}
+                            onchange="
+                                updateWidget(
+                                    'showMinutes',
+                                    this.checked
+                                )
+                            ">
+
+                        Minutes
+
+                    </label>
+
+                    <label class="checkbox">
+
+                        <input
+                            type="checkbox"
+                            ${widget.showSeconds
+                                ? "checked"
+                                : ""}
+                            onchange="
+                                updateWidget(
+                                    'showSeconds',
+                                    this.checked
+                                )
+                            ">
+
+                        Seconds
+
+                    </label>
+
+                </div>
+
+            </div>
+
+            <button
+                class="success"
+                onclick="startSelectedTimer()">
+
+                START COUNTDOWN
+
+            </button>
+
+            <button
+                class="small-btn"
+                style="width:100%;margin-top:8px;"
+                onclick="pauseSelectedTimer()">
+
+                PAUSE
+
+            </button>
+
+            <button
+                class="small-btn"
+                style="width:100%;margin-top:8px;"
+                onclick="resetSelectedTimer()">
+
+                RESET
+
+            </button>
+        `;
+    }
+
+
+    /* TEXT */
+
+    if (widget.type === "text") {
+
+        html += `
+
+            <div class="field">
+
+                <label>Text</label>
+
+                <input
+                    value="${escapeHTML(widget.text)}"
+                    oninput="
+                        updateWidget(
+                            'text',
+                            this.value
+                        )
+                    ">
+
+            </div>
+        `;
+    }
+
+
+    /* COMMON SETTINGS */
+
+    html += `
+
+            <div class="field">
+
+                <label>Font</label>
+
+                <select
+                    onchange="
+                        updateWidget(
+                            'font',
+                            this.value
+                        )
+                    ">
+
+                    ${fonts.map(font => `
+
+                        <option
+                            value="${escapeHTML(font)}"
+                            ${widget.font === font
+                                ? "selected"
+                                : ""}>
+
+                            ${escapeHTML(font)}
+
+                        </option>
+
+                    `).join("")}
+
+                </select>
+
+            </div>
+
+            <div class="field">
+
+                <label>Font size</label>
+
+                <input
+                    type="number"
+                    min="8"
+                    max="300"
+                    value="${widget.size}"
+                    oninput="
+                        updateWidget(
+                            'size',
+                            Number(this.value)
+                        )
+                    ">
+
+            </div>
+
+            <div class="field">
+
+                <label>Color</label>
+
+                <input
+                    type="color"
+                    value="${widget.color}"
+                    onchange="
+                        updateWidget(
+                            'color',
+                            this.value
+                        )
+                    ">
+
+            </div>
+
+            <div class="field">
+
+                <label>
+                    Horizontal position:
+                    ${widget.x}%
+                </label>
+
+                <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="${widget.x}"
+                    oninput="
+                        updateWidget(
+                            'x',
+                            Number(this.value)
+                        );
+                        renderPreview();
+                    ">
+
+            </div>
+
+            <div class="field">
+
+                <label>
+                    Vertical position:
+                    ${widget.y}%
+                </label>
+
+                <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="${widget.y}"
+                    oninput="
+                        updateWidget(
+                            'y',
+                            Number(this.value)
+                        );
+                        renderPreview();
+                    ">
+
+            </div>
+
+        </div>
+    `;
+
+    box.innerHTML = html;
+}
+
+
+/* =========================
+   UPDATE
+========================= */
+
+function updateWidget(key, value) {
+
+    const widget =
+        widgets.find(item => item.id === selectedId);
+
+    if (!widget) return;
+
+    widget[key] = value;
+
+    if (
+        key === "hours" ||
+        key === "minutes" ||
+        key === "seconds" ||
+        key === "days"
+    ) {
+
+        calculateInitialTime(widget);
+    }
+
+    renderPreview();
+}
+
+
+/* =========================
+   TIME CALCULATION
+========================= */
+
+function calculateInitialTime(widget) {
+
+    if (widget.type === "timer") {
+
+        widget.remaining =
+            (Number(widget.hours) * 3600) +
+            (Number(widget.minutes) * 60) +
+            Number(widget.seconds);
+    }
+
+    if (widget.type === "countdown") {
+
+        widget.remaining =
+            (Number(widget.days) * 86400) +
+            (Number(widget.hours) * 3600) +
+            (Number(widget.minutes) * 60) +
+            Number(widget.seconds);
+    }
+}
+
+
+/* =========================
+   TIMER CONTROLS
+========================= */
+
+function startSelectedTimer() {
+
+    const widget =
+        widgets.find(item => item.id === selectedId);
+
+    if (!widget) return;
+
+    if (
+        widget.remaining === undefined ||
+        widget.remaining < 0
+    ) {
+        calculateInitialTime(widget);
+    }
+
+    widget.running = true;
+
+    renderBuilder();
+}
+
+function pauseSelectedTimer() {
+
+    const widget =
+        widgets.find(item => item.id === selectedId);
+
+    if (!widget) return;
+
+    widget.running = false;
+
+    renderBuilder();
+}
+
+function resetSelectedTimer() {
+
+    const widget =
+        widgets.find(item => item.id === selectedId);
+
+    if (!widget) return;
+
+    calculateInitialTime(widget);
+
+    widget.running = false;
+
+    renderBuilder();
+}
+
+
+/* =========================
+   TIMER ENGINE
+========================= */
+
+setInterval(() => {
+
+    widgets.forEach(widget => {
+
+        if (!widget.running) return;
+
+        if (widget.type === "timer") {
+
+            if (widget.mode === "countdown") {
+
+                if (widget.remaining > 0) {
+                    widget.remaining--;
+                } else {
+                    widget.running = false;
+                }
+
+            } else {
+
+                widget.remaining++;
+            }
         }
 
+        if (widget.type === "countdown") {
+
+            if (widget.remaining > 0) {
+                widget.remaining--;
+            } else {
+                widget.running = false;
+            }
+        }
+
+    });
+
+    renderPreview();
+
+    if (
+        document.body.classList.contains(
+            "overlay-mode"
+        )
+    ) {
+
+        renderOverlay();
     }
 
-    updateDisplay();
+}, 1000);
+
+
+/* =========================
+   FORMATTING
+========================= */
+
+function formatTimer(widget) {
+
+    let total =
+        Math.max(
+            0,
+            Math.floor(widget.remaining)
+        );
+
+    const hours =
+        Math.floor(total / 3600);
+
+    const minutes =
+        Math.floor(
+            (total % 3600) / 60
+        );
+
+    const seconds =
+        total % 60;
+
+    const parts = [];
+
+    if (widget.showHours) {
+
+        parts.push(
+            String(hours).padStart(2, "0")
+        );
+    }
+
+    if (widget.showMinutes) {
+
+        parts.push(
+            String(minutes).padStart(2, "0")
+        );
+    }
+
+    if (widget.showSeconds) {
+
+        parts.push(
+            String(seconds).padStart(2, "0")
+        );
+    }
+
+    return parts.length
+        ? parts.join(":")
+        : "00";
 }
 
 
-/* ---------- START ---------- */
+function formatCountdown(widget) {
 
-document.getElementById("startBtn").onclick = function() {
+    let total =
+        Math.max(
+            0,
+            Math.floor(widget.remaining)
+        );
 
-    if (running) return;
+    const days =
+        Math.floor(total / 86400);
 
-    running = true;
+    total %= 86400;
 
-    interval = setInterval(tick, 1000);
+    const hours =
+        Math.floor(total / 3600);
 
-};
+    total %= 3600;
 
+    const minutes =
+        Math.floor(total / 60);
 
-/* ---------- PAUSE ---------- */
+    const seconds =
+        total % 60;
 
-document.getElementById("pauseBtn").onclick = function() {
+    const parts = [];
 
-    running = false;
+    if (widget.showDays) {
 
-    clearInterval(interval);
-
-};
-
-
-/* ---------- RESET ---------- */
-
-document.getElementById("resetBtn").onclick = function() {
-
-    running = false;
-
-    clearInterval(interval);
-
-    studyMinutes =
-        parseInt(document.getElementById("studyInput").value) || 25;
-
-    breakMinutes =
-        parseInt(document.getElementById("breakInput").value) || 5;
-
-    mode = "STUDY";
-    session = 1;
-
-    remainingSeconds = studyMinutes * 60;
-
-    elapsedStudySeconds = 0;
-
-    updateDisplay();
-
-};
-
-
-/* ---------- SETTINGS ---------- */
-
-document.getElementById("settingsButton").onclick = function() {
-
-    document.getElementById("settings").classList.toggle("open");
-
-};
-
-
-/* ---------- SAVE SETTINGS ---------- */
-
-document.getElementById("saveBtn").onclick = function() {
-
-    studyMinutes =
-        parseInt(document.getElementById("studyInput").value) || 25;
-
-    breakMinutes =
-        parseInt(document.getElementById("breakInput").value) || 5;
-
-    title.textContent =
-        document.getElementById("titleInput").value;
-
-    schedule.textContent =
-        document.getElementById("scheduleInput").value;
-
-    timer.style.fontSize =
-        document.getElementById("fontInput").value + "px";
-
-    timer.style.color =
-        document.getElementById("colorInput").value;
-
-    if (!running) {
-        remainingSeconds = studyMinutes * 60;
-        mode = "STUDY";
-        session = 1;
+        parts.push(days + "d");
     }
 
-    localStorage.setItem("studyMinutes", studyMinutes);
-    localStorage.setItem("breakMinutes", breakMinutes);
-    localStorage.setItem("title", title.textContent);
-    localStorage.setItem("schedule", schedule.textContent);
-    localStorage.setItem("fontSize", timer.style.fontSize);
-    localStorage.setItem("color", timer.style.color);
+    if (widget.showHours) {
 
-    updateDisplay();
-
-};
-
-
-/* ---------- LOAD SAVED SETTINGS ---------- */
-
-window.onload = function() {
-
-    const savedStudy =
-        localStorage.getItem("studyMinutes");
-
-    const savedBreak =
-        localStorage.getItem("breakMinutes");
-
-    const savedTitle =
-        localStorage.getItem("title");
-
-    const savedSchedule =
-        localStorage.getItem("schedule");
-
-    const savedFont =
-        localStorage.getItem("fontSize");
-
-    const savedColor =
-        localStorage.getItem("color");
-
-
-    if (savedStudy) {
-
-        studyMinutes = parseInt(savedStudy);
-
-        document.getElementById("studyInput").value =
-            savedStudy;
-
+        parts.push(
+            String(hours).padStart(2, "0") + "h"
+        );
     }
 
-    if (savedBreak) {
+    if (widget.showMinutes) {
 
-        breakMinutes = parseInt(savedBreak);
-
-        document.getElementById("breakInput").value =
-            savedBreak;
-
+        parts.push(
+            String(minutes).padStart(2, "0") + "m"
+        );
     }
 
-    if (savedTitle) {
+    if (widget.showSeconds) {
 
-        title.textContent = savedTitle;
-
-        document.getElementById("titleInput").value =
-            savedTitle;
-
+        parts.push(
+            String(seconds).padStart(2, "0") + "s"
+        );
     }
 
-    if (savedSchedule) {
+    return parts.length
+        ? parts.join(" ")
+        : "0";
+}
 
-        schedule.textContent = savedSchedule;
 
-        document.getElementById("scheduleInput").value =
-            savedSchedule;
+function getWidgetText(widget) {
 
+    if (widget.type === "text") {
+        return widget.text;
     }
 
-    if (savedFont) {
-
-        timer.style.fontSize = savedFont;
-
-        document.getElementById("fontInput").value =
-            parseInt(savedFont);
-
+    if (widget.type === "timer") {
+        return formatTimer(widget);
     }
 
-    if (savedColor) {
-
-        timer.style.color = savedColor;
-
-        document.getElementById("colorInput").value =
-            savedColor;
-
+    if (widget.type === "countdown") {
+        return formatCountdown(widget);
     }
 
-    remainingSeconds = studyMinutes * 60;
+    return "";
+}
 
-    updateDisplay();
 
-};
+/* =========================
+   RENDER
+========================= */
+
+function createWidgetHTML(widget, overlay) {
+
+    const className =
+        overlay
+        ? "overlay-widget"
+        : "widget-render";
+
+    return `
+        <div
+            class="${className}"
+            style="
+                left:${widget.x}%;
+                top:${widget.y}%;
+                font-family:${escapeHTML(widget.font)};
+                font-size:${widget.size}px;
+                color:${widget.color};
+            "
+        >
+            ${escapeHTML(
+                getWidgetText(widget)
+            )}
+        </div>
+    `;
+}
+
+
+function renderPreview() {
+
+    const box =
+        document.getElementById(
+            "previewOverlay"
+        );
+
+    if (!box) return;
+
+    box.innerHTML =
+        widgets
+        .map(widget =>
+            createWidgetHTML(
+                widget,
+                false
+            )
+        )
+        .join("");
+}
+
+
+/* =========================
+   APPLY
+========================= */
+
+function applyChanges() {
+
+    renderBuilder();
+
+    alert(
+        "Changes applied."
+    );
+}
+
+
+/* =========================
+   URL ENCODING
+========================= */
+
+function encodeConfig(config) {
+
+    const json =
+        JSON.stringify(config);
+
+    const bytes =
+        encodeURIComponent(json)
+        .replace(
+            /%([0-9A-F]{2})/g,
+            function(match, hex) {
+
+                return String.fromCharCode(
+                    parseInt(hex, 16)
+                );
+            }
+        );
+
+    return btoa(bytes);
+}
+
+
+function decodeConfig(encoded) {
+
+    const binary =
+        atob(encoded);
+
+    const percentEncoded =
+        Array.from(binary)
+        .map(character => {
+
+            return "%" +
+                character
+                .charCodeAt(0)
+                .toString(16)
+                .padStart(2, "0");
+
+        })
+        .join("");
+
+    const json =
+        decodeURIComponent(
+            percentEncoded
+        );
+
+    return JSON.parse(json);
+}
+
+
+/* =========================
+   COPY PRISM URL
+========================= */
+
+function copyPrismURL() {
+
+    const config = {
+        version: 1,
+        widgets: widgets
+    };
+
+    const encoded =
+        encodeConfig(config);
+
+    const base =
+        window.location.origin +
+        window.location.pathname;
+
+    const url =
+        base +
+        "?overlay=1#config=" +
+        encodeURIComponent(encoded);
+
+    if (
+        navigator.clipboard &&
+        navigator.clipboard.writeText
+    ) {
+
+        navigator.clipboard
+            .writeText(url)
+            .then(() => {
+
+                alert(
+                    "PRISM URL copied!"
+                );
+
+            })
+            .catch(() => {
+
+                prompt(
+                    "Copy this PRISM URL:",
+                    url
+                );
+            });
+
+    } else {
+
+        prompt(
+            "Copy this PRISM URL:",
+            url
+        );
+    }
+}
+
+
+/* =========================
+   OVERLAY MODE
+========================= */
+
+function loadOverlay() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    if (
+        params.get("overlay") !== "1"
+    ) {
+
+        return false;
+    }
+
+    document.body.classList.add(
+        "overlay-mode"
+    );
+
+    const hash =
+        window.location.hash;
+
+    if (
+        !hash.startsWith("#config=")
+    ) {
+
+        return true;
+    }
+
+    try {
+
+        const encoded =
+            decodeURIComponent(
+                hash.substring(8)
+            );
+
+        const config =
+            decodeConfig(encoded);
+
+        widgets =
+            Array.isArray(config.widgets)
+            ? config.widgets
+            : [];
+
+        renderOverlay();
+
+    } catch (error) {
+
+        console.error(
+            "Configuration error:",
+            error
+        );
+    }
+
+    return true;
+}
+
+
+function renderOverlay() {
+
+    const root =
+        document.getElementById(
+            "overlayRoot"
+        );
+
+    if (!root) return;
+
+    root.innerHTML =
+        widgets
+        .map(widget =>
+            createWidgetHTML(
+                widget,
+                true
+            )
+        )
+        .join("");
+}
+
+
+/* =========================
+   CLEAR
+========================= */
+
+function resetAll() {
+
+    if (
+        !confirm(
+            "Remove all widgets?"
+        )
+    ) {
+
+        return;
+    }
+
+    widgets = [];
+
+    selectedId = null;
+
+    renderBuilder();
+}
+
+
+/* =========================
+   START
+========================= */
+
+if (!loadOverlay()) {
+
+    renderBuilder();
+
+} else {
+
+    renderOverlay();
+}
 
 </script>
 
 </body>
-                        </html>
+</html>
