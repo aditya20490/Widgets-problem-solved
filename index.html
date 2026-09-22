@@ -3,489 +3,274 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PRISM Widget Builder</title>
+<title>Study Stream Widget Builder</title>
 
 <style>
-* {
-    box-sizing: border-box;
-}
-
-html, body {
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-    font-family: Inter, Arial, Helvetica, sans-serif;
-    background: #080b12;
-    color: #f5f7fb;
-}
-
-button,
-input,
-select,
-textarea {
-    font: inherit;
-}
-
-button {
-    cursor: pointer;
-}
-
-.app {
-    width: 100%;
-    max-width: 1400px;
-    margin: auto;
-    padding: 22px;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.logo {
-    font-size: 25px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-}
-
-.logo span {
-    color: #6ea8ff;
-}
-
-.subtitle {
-    color: #8993a7;
-    font-size: 13px;
-    margin-top: 4px;
-}
-
-.layout {
-    display: grid;
-    grid-template-columns: 320px minmax(0, 1fr) 320px;
-    gap: 18px;
-}
-
-.panel {
-    background: #111622;
-    border: 1px solid #20283a;
-    border-radius: 16px;
-    overflow: hidden;
-}
-
-.panel-header {
-    padding: 15px 16px;
-    border-bottom: 1px solid #20283a;
-    font-weight: 700;
-}
-
-.panel-body {
-    padding: 15px;
-}
-
-.widget-list {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-}
-
-.widget-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 12px;
-    border: 1px solid #252e42;
-    background: #0d121d;
-    border-radius: 12px;
-}
-
-.widget-item.selected {
-    border-color: #5e91ff;
-    background: #121d31;
-}
-
-.widget-info {
-    min-width: 0;
-}
-
-.widget-name {
-    font-weight: 700;
-    font-size: 14px;
-}
-
-.widget-type {
-    color: #7e899e;
-    font-size: 12px;
-    margin-top: 3px;
-}
-
-.widget-actions {
-    display: flex;
-    gap: 5px;
-}
+*{box-sizing:border-box}
 
-.icon-btn {
-    width: 34px;
-    height: 34px;
-    border: 1px solid #293349;
-    background: #151c2a;
-    color: #dfe5f0;
-    border-radius: 9px;
+:root{
+  color-scheme:dark;
 }
 
-.icon-btn:hover {
-    background: #1c2638;
+body{
+  margin:0;
+  background:#090b10;
+  color:#f5f7fb;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 
-.add-buttons {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 7px;
-    margin-top: 14px;
+button,input,select{
+  font:inherit;
 }
 
-.add-btn {
-    padding: 10px 5px;
-    border: 1px solid #2b3650;
-    background: #151c2a;
-    color: #e8edf7;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 700;
+button{
+  cursor:pointer;
+  border:1px solid #303846;
+  background:#1a202b;
+  color:#fff;
+  border-radius:10px;
+  padding:10px 13px;
 }
 
-.add-btn:hover {
-    background: #1b2538;
-    border-color: #527bc9;
+button:hover{
+  background:#222a37;
 }
 
-.empty {
-    color: #788397;
-    text-align: center;
-    padding: 35px 15px;
-    font-size: 13px;
-    line-height: 1.5;
+button.primary{
+  background:#fff;
+  color:#090b10;
+  border-color:#fff;
+  font-weight:700;
 }
 
-.field {
-    margin-bottom: 15px;
+button.danger{
+  border-color:#71363d;
+  color:#ffb8bf;
 }
 
-.field label {
-    display: block;
-    font-size: 12px;
-    color: #98a2b5;
-    margin-bottom: 7px;
-    font-weight: 600;
+button.small{
+  padding:7px 9px;
+  font-size:13px;
 }
 
-input[type="text"],
-input[type="number"],
-select,
-textarea {
-    width: 100%;
-    border: 1px solid #293349;
-    background: #0b1019;
-    color: #f1f5fb;
-    border-radius: 9px;
-    padding: 10px 11px;
-    outline: none;
+.app{
+  max-width:1180px;
+  margin:auto;
+  padding:22px;
 }
 
-textarea {
-    min-height: 90px;
-    resize: vertical;
+h1{
+  margin:0 0 6px;
+  font-size:28px;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-    border-color: #5d8ff5;
+.sub{
+  color:#9da5b4;
+  margin-bottom:20px;
 }
 
-.row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 9px;
+.grid{
+  display:grid;
+  grid-template-columns:330px 1fr;
+  gap:18px;
 }
 
-.row-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
+.card{
+  background:#11151d;
+  border:1px solid #242a35;
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 10px 35px rgba(0,0,0,.2);
 }
 
-.check-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+.card h2{
+  font-size:17px;
+  margin:0 0 12px;
 }
 
-.check {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px;
-    background: #0b1019;
-    border: 1px solid #222c40;
-    border-radius: 9px;
-    font-size: 12px;
-    color: #b7c0d0;
+.row{
+  display:flex;
+  gap:8px;
+  align-items:center;
 }
 
-.check input {
-    accent-color: #6d9cff;
+.row>*{
+  min-width:0;
 }
 
-.color-row {
-    display: flex;
-    gap: 9px;
+.stack{
+  display:grid;
+  gap:10px;
 }
 
-.color-row input[type="color"] {
-    width: 48px;
-    height: 40px;
-    padding: 3px;
-    border: 1px solid #293349;
-    background: #0b1019;
-    border-radius: 9px;
+.field{
+  display:grid;
+  gap:5px;
 }
 
-.color-row input[type="text"] {
-    flex: 1;
+label{
+  font-size:12px;
+  color:#aeb6c5;
 }
 
-.preview-wrap {
-    padding: 15px;
+input,select{
+  width:100%;
+  background:#0c1016;
+  color:#fff;
+  border:1px solid #303846;
+  border-radius:9px;
+  padding:9px;
 }
 
-.preview {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background:
-        radial-gradient(circle at 50% 40%, rgba(50,65,95,.22), transparent 45%),
-        #05070b;
-    border: 1px solid #263047;
-    border-radius: 13px;
-    position: relative;
-    overflow: hidden;
+.two{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
 }
 
-.preview-label {
-    position: absolute;
-    top: 10px;
-    left: 12px;
-    font-size: 10px;
-    color: #58647a;
-    letter-spacing: .5px;
-    text-transform: uppercase;
-    z-index: 2;
+.three{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
 }
 
-.preview-widget {
-    position: absolute;
-    white-space: pre-wrap;
-    transform: translate(-50%, -50%);
-    user-select: none;
+.widget-list{
+  display:grid;
+  gap:8px;
+  margin-bottom:12px;
 }
 
-.preview-empty {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #566177;
-    font-size: 13px;
+.widget-item{
+  padding:10px;
+  border:1px solid #2b323f;
+  border-radius:11px;
+  background:#0d1117;
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
 }
 
-.editor-title {
-    font-size: 14px;
-    font-weight: 800;
-    margin-bottom: 16px;
+.widget-item.active{
+  border-color:#fff;
 }
 
-.mode-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 8px;
+.widget-name{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
-.mode-btn {
-    padding: 10px;
-    border-radius: 9px;
-    border: 1px solid #293349;
-    background: #101725;
-    color: #bfc8d7;
-    font-size: 12px;
-    font-weight: 700;
+.muted{
+  color:#8992a2;
+  font-size:12px;
 }
 
-.mode-btn.active {
-    background: #172744;
-    border-color: #5e8ff3;
-    color: #eaf1ff;
+.editor{
+  min-height:360px;
 }
 
-.time-box {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 7px;
+.preview-wrap{
+  margin-top:16px;
+  border:1px solid #242a35;
+  border-radius:18px;
+  overflow:hidden;
+  background:#05070b;
 }
 
-.time-unit {
-    text-align: center;
+.preview-title{
+  padding:10px 14px;
+  color:#9da5b4;
+  font-size:12px;
+  border-bottom:1px solid #242a35;
 }
 
-.time-unit input {
-    text-align: center;
+.preview{
+  position:relative;
+  height:420px;
+  overflow:hidden;
+  background:transparent;
 }
 
-.action-bar {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 16px;
+.stage-widget{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  white-space:nowrap;
+  line-height:1;
+  text-rendering:geometricPrecision;
 }
 
-.primary {
-    flex: 1;
-    min-width: 110px;
-    padding: 11px 14px;
-    border: 0;
-    border-radius: 10px;
-    background: #5e8ff3;
-    color: white;
-    font-weight: 800;
+.preview .stage-widget{
+  pointer-events:none;
 }
 
-.primary:hover {
-    background: #709cf5;
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
 }
 
-.secondary {
-    padding: 11px 14px;
-    border: 1px solid #2c3850;
-    border-radius: 10px;
-    background: #151d2c;
-    color: #dce4f1;
-    font-weight: 700;
+.notice{
+  padding:10px 12px;
+  border-radius:10px;
+  background:#0d131c;
+  border:1px solid #263142;
+  color:#b9c2d0;
+  font-size:12px;
 }
 
-.danger {
-    padding: 11px 14px;
-    border: 1px solid #5a2e38;
-    border-radius: 10px;
-    background: #24151a;
-    color: #ffb8c3;
-    font-weight: 700;
+.checks{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
 }
 
-.status {
-    margin-top: 12px;
-    padding: 10px 11px;
-    border-radius: 9px;
-    background: #0b1019;
-    border: 1px solid #222c40;
-    color: #7f8ba0;
-    font-size: 12px;
-    line-height: 1.45;
+.check{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:#c8cfda;
+  font-size:12px;
 }
 
-.status.running {
-    color: #9ed7b1;
-    border-color: #285338;
-    background: #0c1710;
+.check input{
+  width:auto;
 }
 
-.status.ready {
-    color: #9bbdf9;
-    border-color: #2a4778;
-    background: #0c1422;
+.empty{
+  color:#707887;
+  text-align:center;
+  padding:25px;
 }
 
-.help {
-    color: #747f93;
-    font-size: 11px;
-    line-height: 1.5;
-    margin-top: 8px;
+.overlay-body{
+  margin:0;
+  background:transparent;
+  overflow:hidden;
 }
 
-.position-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 9px;
+.overlay-stage{
+  position:fixed;
+  inset:0;
+  background:transparent;
+  overflow:hidden;
 }
 
-.small-note {
-    font-size: 10px;
-    color: #626d81;
-    margin-top: 5px;
+.overlay-widget{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  white-space:nowrap;
+  line-height:1;
+  text-rendering:geometricPrecision;
 }
-
-.overlay-page {
-    margin: 0;
-    padding: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    background: transparent !important;
-}
-
-.overlay-container {
-    position: fixed;
-    inset: 0;
-    background: transparent;
-    overflow: hidden;
-}
-
-.overlay-widget {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    white-space: pre-wrap;
-    pointer-events: none;
-}
-
-.overlay-status {
-    position: fixed;
-    left: 50%;
-    bottom: 12px;
-    transform: translateX(-50%);
-    color: rgba(255,255,255,.35);
-    font: 11px Arial, sans-serif;
-    pointer-events: none;
-    display: none;
-}
-
-@media (max-width: 1050px) {
-    .layout {
-        grid-template-columns: 280px minmax(0, 1fr);
-    }
-
-    .editor-panel {
-        grid-column: 1 / -1;
-    }
-}
-
-@media (max-width: 760px) {
-    .app {
-        padding: 12px;
-    }
-
-    .layout {
-        grid-template-columns: 1fr;
-    }
 
-    .editor-panel {
-        grid-column: auto;
-    }
+@media(max-width:850px){
+  .grid{
+    grid-template-columns:1fr;
+  }
 
-    .header {
-        align-items: flex-start;
-    }
+  .preview{
+    height:360px;
+  }
 }
 </style>
 </head>
@@ -494,1636 +279,2246 @@ textarea:focus {
 
 <div id="builder" class="app">
 
-    <div class="header">
-        <div>
-            <div class="logo">PRISM <span>Widget Builder</span></div>
-            <div class="subtitle">
-                Build clean browser-based overlays for your study stream.
-            </div>
-        </div>
-    </div>
+  <h1>Study Stream Widget Builder</h1>
 
-    <div class="layout">
+  <div class="sub">
+    Create timers, countdowns and text overlays for PRISM Live Studio.
+  </div>
 
-        <!-- LEFT -->
-        <section class="panel">
-            <div class="panel-header">Widgets</div>
+  <div class="grid">
 
-            <div class="panel-body">
+    <section class="card">
 
-                <div id="widgetList" class="widget-list"></div>
+      <h2>Widgets</h2>
 
-                <div class="add-buttons">
-                    <button class="add-btn" onclick="addWidget('timer')">
-                        + Timer
-                    </button>
+      <div class="toolbar" style="margin-bottom:12px">
+        <button onclick="addWidget('timer')">+ Timer</button>
+        <button onclick="addWidget('countdown')">+ Countdown</button>
+        <button onclick="addWidget('text')">+ Text</button>
+      </div>
 
-                    <button class="add-btn" onclick="addWidget('countdown')">
-                        + Countdown
-                    </button>
+      <div id="widgetList" class="widget-list"></div>
 
-                    <button class="add-btn" onclick="addWidget('text')">
-                        + Text
-                    </button>
-                </div>
+      <div class="notice">
+        Start a timer before pressing <b>Copy PRISM URL</b>.
+        The running state and exact start time are saved in the URL.
+      </div>
 
-                <div class="action-bar">
-                    <button class="secondary" onclick="resetAll()">
-                        Clear All
-                    </button>
-                </div>
-
-            </div>
-        </section>
+    </section>
 
 
-        <!-- CENTER -->
-        <section class="panel">
+    <section class="card editor">
 
-            <div class="panel-header">
-                Live Preview
-            </div>
+      <h2>Edit selected widget</h2>
 
-            <div class="preview-wrap">
-                <div id="preview" class="preview">
-                    <div class="preview-label">16:9 STREAM PREVIEW</div>
-                </div>
+      <div id="editor"></div>
 
-                <div class="help">
-                    This preview shows approximately how the overlay will appear inside PRISM.
-                </div>
+    </section>
 
-                <div class="action-bar">
-                    <button class="primary" onclick="applyChanges()">
-                        Apply Changes
-                    </button>
-
-                    <button class="secondary" onclick="copyPrismURL()">
-                        Copy PRISM URL
-                    </button>
-                </div>
-
-                <div id="mainStatus" class="status">
-                    Configure your widgets. For timers, press START before copying the PRISM URL.
-                </div>
-            </div>
-
-        </section>
+  </div>
 
 
-        <!-- RIGHT -->
-        <section class="panel editor-panel">
+  <div class="card" style="margin-top:18px">
 
-            <div class="panel-header">Customize</div>
+    <h2>Preview</h2>
 
-            <div id="editor" class="panel-body">
-                <div class="empty">
-                    Select a widget from the left to customize it.
-                </div>
-            </div>
+    <div id="preview" class="preview"></div>
 
-        </section>
+    <div class="toolbar" style="margin-top:12px">
+
+      <button class="primary" onclick="applyChanges()">
+        Apply Changes
+      </button>
+
+      <button onclick="copyPrismURL()">
+        Copy PRISM URL
+      </button>
+
+      <button class="danger" onclick="clearAll()">
+        Clear All
+      </button>
 
     </div>
+
+    <div id="status" class="muted" style="margin-top:10px"></div>
+
+  </div>
 
 </div>
 
 
+<div id="overlay" class="overlay-stage" style="display:none"></div>
+
+
 <script>
+
 /* =========================================================
-   STATE
-========================================================= */
+   BASIC DATA
+   ========================================================= */
+
+const STORAGE_KEY = "study-stream-widget-builder-v3";
 
 let widgets = [];
 let selectedId = null;
-let nextId = 1;
-let builderTick = null;
 
 
 /* =========================================================
-   DEFAULT WIDGET
-========================================================= */
+   CREATE WIDGET
+   ========================================================= */
 
-function defaultWidget(type) {
+function uid(){
+  return Math.random().toString(36).slice(2,10)
+       + Date.now().toString(36);
+}
 
-    const base = {
-        id: nextId++,
-        type: type,
-        name: "",
-        x: 50,
-        y: 50,
-        font: "Arial",
-        fontSize: 42,
-        color: "#ffffff",
-        weight: "700"
-    };
 
-    if (type === "timer") {
-        return {
-            ...base,
-            name: "Timer",
-            hours: 6,
-            minutes: 25,
-            seconds: 0,
-            mode: "countdown",
-            showHours: true,
-            showMinutes: true,
-            showSeconds: true,
-            running: false,
-            startedAt: null,
-            stoppedAt: null
-        };
-    }
+function defaultWidget(type){
 
-    if (type === "countdown") {
-        return {
-            ...base,
-            name: "Countdown",
-            days: 0,
-            hours: 1,
-            minutes: 0,
-            seconds: 0,
-            showDays: true,
-            showHours: true,
-            showMinutes: true,
-            showSeconds: true,
-            running: false,
-            startedAt: null,
-            stoppedAt: null
-        };
-    }
+  if(type === "text"){
 
     return {
-        ...base,
-        name: "Text",
-        text: "JEE STUDY WITH ME",
-        fontSize: 36,
-        weight: "700"
+      id:uid(),
+      type:"text",
+      name:"Text",
+      text:"JEE STUDY WITH ME",
+      font:"Inter",
+      size:48,
+      color:"#ffffff",
+      x:50,
+      y:50
     };
+
+  }
+
+
+  if(type === "countdown"){
+
+    return {
+      id:uid(),
+      type:"timer",
+      name:"Countdown",
+
+      mode:"countdown",
+
+      hours:0,
+      minutes:30,
+      seconds:0,
+
+      showHours:true,
+      showMinutes:true,
+      showSeconds:true,
+
+      font:"Impact",
+      size:64,
+      color:"#ffffff",
+
+      x:50,
+      y:50,
+
+      running:false,
+
+      startedAt:null,
+
+      pausedRemaining:1800
+    };
+
+  }
+
+
+  return {
+
+    id:uid(),
+
+    type:"timer",
+
+    name:"Timer",
+
+    mode:"countup",
+
+    hours:0,
+    minutes:0,
+    seconds:0,
+
+    showHours:true,
+    showMinutes:true,
+    showSeconds:true,
+
+    font:"Impact",
+    size:64,
+    color:"#ffffff",
+
+    x:50,
+    y:50,
+
+    running:false,
+
+    startedAt:null,
+
+    pausedElapsed:0
+
+  };
+
+}
+
+
+function addWidget(type){
+
+  const w = defaultWidget(type);
+
+  widgets.push(w);
+
+  selectedId = w.id;
+
+  renderAll();
+
 }
 
 
 /* =========================================================
-   ADD / DELETE / SELECT
-========================================================= */
+   GET SELECTED
+   ========================================================= */
 
-function addWidget(type) {
+function getSelected(){
 
-    const widget = defaultWidget(type);
+  return widgets.find(w => w.id === selectedId);
 
-    widgets.push(widget);
-    selectedId = widget.id;
-
-    renderAll();
-}
-
-
-function deleteWidget(id) {
-
-    widgets = widgets.filter(w => w.id !== id);
-
-    if (selectedId === id) {
-        selectedId = widgets.length ? widgets[0].id : null;
-    }
-
-    renderAll();
-}
-
-
-function selectWidget(id) {
-
-    selectedId = id;
-    renderAll();
-}
-
-
-function getSelected() {
-    return widgets.find(w => w.id === selectedId);
 }
 
 
 /* =========================================================
-   BUILDER UI
-========================================================= */
+   TIME FUNCTIONS
+   ========================================================= */
 
-function renderAll() {
-    renderWidgetList();
-    renderEditor();
-    renderPreview();
-    updateMainStatus();
+function durationSeconds(w){
+
+  return (Number(w.hours) || 0) * 3600
+       + (Number(w.minutes) || 0) * 60
+       + (Number(w.seconds) || 0);
+
 }
 
 
-function renderWidgetList() {
+/*
+  THIS IS THE IMPORTANT PART.
 
-    const list = document.getElementById("widgetList");
+  For countdown:
 
-    if (!widgets.length) {
-        list.innerHTML = `
-            <div class="empty">
-                No widgets yet.<br>
-                Add a Timer, Countdown or Text widget below.
-            </div>
-        `;
-        return;
+  remaining =
+  duration -
+  (current time - startedAt)
+
+  Therefore the URL only needs the original start
+  timestamp. Any browser/WebView can calculate the
+  current timer value itself.
+*/
+
+function currentSeconds(w, now = Date.now()){
+
+  if(w.type !== "timer"){
+    return 0;
+  }
+
+
+  /* COUNTDOWN */
+
+  if(w.mode === "countdown"){
+
+    const total = durationSeconds(w);
+
+
+    if(
+      w.running &&
+      Number.isFinite(Number(w.startedAt))
+    ){
+
+      const elapsed =
+        Math.floor(
+          (now - Number(w.startedAt)) / 1000
+        );
+
+      return Math.max(
+        0,
+        total - elapsed
+      );
+
     }
 
-    list.innerHTML = widgets.map(w => {
 
-        let label = w.type.toUpperCase();
+    if(
+      Number.isFinite(
+        Number(w.pausedRemaining)
+      )
+    ){
 
-        return `
-            <div class="widget-item ${selectedId === w.id ? "selected" : ""}"
-                 onclick="selectWidget(${w.id})">
+      return Math.max(
+        0,
+        Number(w.pausedRemaining)
+      );
 
-                <div class="widget-info">
-                    <div class="widget-name">
-                        ${escapeHTML(w.name || label)}
-                    </div>
+    }
 
-                    <div class="widget-type">
-                        ${label}
-                    </div>
-                </div>
 
-                <div class="widget-actions">
-                    <button
-                        class="icon-btn"
-                        onclick="event.stopPropagation(); deleteWidget(${w.id})">
-                        ×
-                    </button>
-                </div>
+    return total;
 
-            </div>
-        `;
+  }
 
-    }).join("");
+
+  /* COUNT UP */
+
+  if(
+    w.running &&
+    Number.isFinite(Number(w.startedAt))
+  ){
+
+    const elapsed =
+      Math.floor(
+        (now - Number(w.startedAt)) / 1000
+      );
+
+    return Math.max(
+      0,
+      Number(w.pausedElapsed || 0) + elapsed
+    );
+
+  }
+
+
+  return Math.max(
+    0,
+    Number(w.pausedElapsed || 0)
+  );
+
+}
+
+
+/* =========================================================
+   FORMAT TIMER
+   ========================================================= */
+
+function formatTime(totalSeconds, w){
+
+  totalSeconds =
+    Math.max(
+      0,
+      Math.floor(totalSeconds)
+    );
+
+
+  const h =
+    Math.floor(totalSeconds / 3600);
+
+
+  const m =
+    Math.floor(
+      (totalSeconds % 3600) / 60
+    );
+
+
+  const s =
+    totalSeconds % 60;
+
+
+  const parts = [];
+
+
+  if(w.showHours){
+    parts.push(
+      String(h).padStart(2,"0")
+    );
+  }
+
+
+  if(w.showMinutes){
+    parts.push(
+      String(m).padStart(2,"0")
+    );
+  }
+
+
+  if(w.showSeconds){
+    parts.push(
+      String(s).padStart(2,"0")
+    );
+  }
+
+
+  return parts.length
+    ? parts.join(":")
+    : "00";
+
+}
+
+
+/* =========================================================
+   START TIMER
+   ========================================================= */
+
+function startTimer(id){
+
+  const w =
+    widgets.find(x => x.id === id);
+
+
+  if(
+    !w ||
+    w.type !== "timer"
+  ){
+    return;
+  }
+
+
+  const now = Date.now();
+
+
+  /* COUNTDOWN */
+
+  if(w.mode === "countdown"){
+
+    let remaining;
+
+
+    if(
+      Number.isFinite(
+        Number(w.pausedRemaining)
+      )
+    ){
+
+      remaining =
+        Number(w.pausedRemaining);
+
+    }else{
+
+      remaining =
+        durationSeconds(w);
+
+    }
+
+
+    if(remaining <= 0){
+
+      remaining =
+        durationSeconds(w);
+
+    }
+
+
+    /*
+      IMPORTANT:
+      pausedRemaining is kept as the starting
+      point and startedAt becomes the exact
+      timestamp.
+    */
+
+    w.pausedRemaining = remaining;
+
+    w.startedAt = now;
+
+    w.running = true;
+
+  }
+
+
+  /* COUNT UP */
+
+  else{
+
+    w.startedAt = now;
+
+    w.running = true;
+
+  }
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   PAUSE TIMER
+   ========================================================= */
+
+function pauseTimer(id){
+
+  const w =
+    widgets.find(x => x.id === id);
+
+
+  if(
+    !w ||
+    w.type !== "timer" ||
+    !w.running
+  ){
+    return;
+  }
+
+
+  if(w.mode === "countdown"){
+
+    w.pausedRemaining =
+      currentSeconds(w);
+
+  }
+
+  else{
+
+    w.pausedElapsed =
+      currentSeconds(w);
+
+  }
+
+
+  w.running = false;
+
+  w.startedAt = null;
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   RESET TIMER
+   ========================================================= */
+
+function resetTimer(id){
+
+  const w =
+    widgets.find(x => x.id === id);
+
+
+  if(
+    !w ||
+    w.type !== "timer"
+  ){
+    return;
+  }
+
+
+  w.running = false;
+
+  w.startedAt = null;
+
+
+  if(w.mode === "countdown"){
+
+    w.pausedRemaining =
+      durationSeconds(w);
+
+  }
+
+  else{
+
+    w.pausedElapsed = 0;
+
+  }
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   REMOVE / DUPLICATE
+   ========================================================= */
+
+function removeWidget(id){
+
+  widgets =
+    widgets.filter(
+      w => w.id !== id
+    );
+
+
+  if(selectedId === id){
+
+    selectedId =
+      widgets[0]?.id || null;
+
+  }
+
+
+  renderAll();
+
+}
+
+
+function duplicateWidget(id){
+
+  const original =
+    widgets.find(
+      w => w.id === id
+    );
+
+
+  if(!original){
+    return;
+  }
+
+
+  const copy =
+    JSON.parse(
+      JSON.stringify(original)
+    );
+
+
+  copy.id = uid();
+
+  copy.name =
+    original.name + " Copy";
+
+
+  if(copy.type === "timer"){
+
+    copy.running = false;
+
+    copy.startedAt = null;
+
+
+    if(copy.mode === "countdown"){
+
+      copy.pausedRemaining =
+        durationSeconds(copy);
+
+    }
+
+    else{
+
+      copy.pausedElapsed = 0;
+
+    }
+
+  }
+
+
+  widgets.push(copy);
+
+  selectedId = copy.id;
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   EDIT FIELDS
+   ========================================================= */
+
+function setField(field,value){
+
+  const w = getSelected();
+
+
+  if(!w){
+    return;
+  }
+
+
+  if([
+    "size",
+    "x",
+    "y",
+    "hours",
+    "minutes",
+    "seconds"
+  ].includes(field)){
+
+    value = Number(value);
+
+  }
+
+
+  if([
+    "showHours",
+    "showMinutes",
+    "showSeconds"
+  ].includes(field)){
+
+    value = !!value;
+
+  }
+
+
+  w[field] = value;
+
+
+  if(
+    w.type === "timer" &&
+    w.mode === "countdown" &&
+    [
+      "hours",
+      "minutes",
+      "seconds"
+    ].includes(field) &&
+    !w.running
+  ){
+
+    w.pausedRemaining =
+      durationSeconds(w);
+
+  }
+
+
+  saveLocal();
+
+  renderList();
+
+  renderEditor();
+
+  renderPreview();
+
+}
+
+
+/* =========================================================
+   WIDGET LIST
+   ========================================================= */
+
+function renderList(){
+
+  const el =
+    document.getElementById(
+      "widgetList"
+    );
+
+
+  if(!widgets.length){
+
+    el.innerHTML =
+      '<div class="empty">No widgets yet.</div>';
+
+    return;
+
+  }
+
+
+  el.innerHTML =
+    widgets.map(w => `
+
+      <div class="widget-item ${
+        w.id === selectedId
+          ? "active"
+          : ""
+      }">
+
+        <button
+          class="small"
+          style="
+            flex:1;
+            text-align:left;
+            background:transparent;
+            border:0
+          "
+          onclick="
+            selectedId='${w.id}';
+            renderAll();
+          "
+        >
+
+          <div class="widget-name">
+            <b>${escapeHtml(w.name)}</b>
+          </div>
+
+          <div class="muted">
+            ${
+              w.type === "text"
+              ? "Text"
+              : (
+                  w.mode === "countdown"
+                  ? "Countdown"
+                  : "Timer"
+                )
+            }
+          </div>
+
+        </button>
+
+
+        <button
+          class="small"
+          onclick="
+            duplicateWidget('${w.id}')
+          "
+        >
+          ⧉
+        </button>
+
+
+        <button
+          class="small danger"
+          onclick="
+            removeWidget('${w.id}')
+          "
+        >
+          ×
+        </button>
+
+      </div>
+
+    `).join("");
+
 }
 
 
 /* =========================================================
    EDITOR
-========================================================= */
+   ========================================================= */
 
-function renderEditor() {
+function renderEditor(){
 
-    const editor = document.getElementById("editor");
-    const w = getSelected();
+  const el =
+    document.getElementById(
+      "editor"
+    );
 
-    if (!w) {
-        editor.innerHTML = `
-            <div class="empty">
-                Select a widget from the left to customize it.
-            </div>
-        `;
-        return;
-    }
 
-    let html = `
-        <div class="editor-title">
-            ${escapeHTML(w.name || w.type)}
-        </div>
+  const w = getSelected();
+
+
+  if(!w){
+
+    el.innerHTML =
+      '<div class="empty">Select a widget to edit it.</div>';
+
+    return;
+
+  }
+
+
+  /* TEXT */
+
+  if(w.type === "text"){
+
+    el.innerHTML = `
+
+      <div class="stack">
 
         <div class="field">
-            <label>Widget Name</label>
-            <input
-                type="text"
-                value="${escapeAttr(w.name)}"
-                oninput="updateWidget('name', this.value)">
+
+          <label>Name</label>
+
+          <input
+            value="${escapeAttr(w.name)}"
+            oninput="
+              setField(
+                'name',
+                this.value
+              )
+            "
+          >
+
         </div>
+
+
+        <div class="field">
+
+          <label>Text</label>
+
+          <input
+            value="${escapeAttr(w.text)}"
+            oninput="
+              setField(
+                'text',
+                this.value
+              )
+            "
+          >
+
+        </div>
+
+
+        ${styleFields(w)}
+
+      </div>
+
     `;
 
-    if (w.type === "timer") {
+    return;
 
-        html += `
-            <div class="field">
-                <label>Timer Mode</label>
-
-                <div class="mode-buttons">
-
-                    <button
-                        class="mode-btn ${w.mode === "countdown" ? "active" : ""}"
-                        onclick="updateWidget('mode','countdown')">
-                        Countdown
-                    </button>
-
-                    <button
-                        class="mode-btn ${w.mode === "countup" ? "active" : ""}"
-                        onclick="updateWidget('mode','countup')">
-                        Count Up
-                    </button>
-
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Starting Time</label>
-
-                <div class="time-box">
-
-                    <div class="time-unit">
-                        <input
-                            type="number"
-                            min="0"
-                            max="999"
-                            value="${w.hours}"
-                            oninput="updateNumber('hours',this.value,999)">
-                        <div class="small-note">Hours</div>
-                    </div>
-
-                    <div class="time-unit">
-                        <input
-                            type="number"
-                            min="0"
-                            max="59"
-                            value="${w.minutes}"
-                            oninput="updateNumber('minutes',this.value,59)">
-                        <div class="small-note">Minutes</div>
-                    </div>
-
-                    <div class="time-unit">
-                        <input
-                            type="number"
-                            min="0"
-                            max="59"
-                            value="${w.seconds}"
-                            oninput="updateNumber('seconds',this.value,59)">
-                        <div class="small-note">Seconds</div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Show Units</label>
-
-                <div class="check-grid">
-
-                    <label class="check">
-                        <input
-                            type="checkbox"
-                            ${w.showHours ? "checked" : ""}
-                            onchange="updateWidget('showHours',this.checked)">
-                        Hours
-                    </label>
-
-                    <label class="check">
-                        <input
-                            type="checkbox"
-                            ${w.showMinutes ? "checked" : ""}
-                            onchange="updateWidget('showMinutes',this.checked)">
-                        Minutes
-                    </label>
-
-                    <label class="check">
-                        <input
-                            type="checkbox"
-                            ${w.showSeconds ? "checked" : ""}
-                            onchange="updateWidget('showSeconds',this.checked)">
-                        Seconds
-                    </label>
-
-                </div>
-            </div>
-
-            <div class="action-bar">
-
-                <button class="primary" onclick="startSelected()">
-                    START
-                </button>
-
-                <button class="secondary" onclick="pauseSelected()">
-                    PAUSE
-                </button>
-
-                <button class="secondary" onclick="resetSelected()">
-                    RESET
-                </button>
-
-            </div>
-        `;
-    }
+  }
 
 
-    if (w.type === "countdown") {
+  /* TIMER */
 
-        html += `
-            <div class="field">
-                <label>Countdown Duration</label>
-
-                <div class="time-box">
-
-                    <div class="time-unit">
-                        <input
-                            type="number"
-                            min="0"
-                            max="9999"
-                            value="${w.days}"
-                            oninput="updateNumber('days',this.value,9999)">
-                        <div class="small-note">Days</div>
-                    </div>
-
-                    <div class="time-unit">
-                        <input
-                            type="number"
-                            min="0"
-                            max="23"
-                            value="${w.hours}"
-                            oninput="updateNumber('hours',this.value,23)">
-                        <div class="small-note">Hours</div>
-                    </div>
-
-                    <div class="time-unit">
-                        <input
-                            type="number"
-                            min="0"
-                            max="59"
-                            value="${w.minutes}"
-                            oninput="updateNumber('minutes',this.value,59)">
-                        <div class="small-note">Minutes</div>
-                    </div>
-
-                </div>
-
-                <div style="margin-top:8px">
-                    <div class="time-unit">
-                        <input
-                            type="number"
-                            min="0"
-                            max="59"
-                            value="${w.seconds}"
-                            oninput="updateNumber('seconds',this.value,59)">
-                        <div class="small-note">Seconds</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Show Units</label>
-
-                <div class="check-grid">
-
-                    <label class="check">
-                        <input
-                            type="checkbox"
-                            ${w.showDays ? "checked" : ""}
-                            onchange="updateWidget('showDays',this.checked)">
-                        Days
-                    </label>
-
-                    <label class="check">
-                        <input
-                            type="checkbox"
-                            ${w.showHours ? "checked" : ""}
-                            onchange="updateWidget('showHours',this.checked)">
-                        Hours
-                    </label>
-
-                    <label class="check">
-                        <input
-                            type="checkbox"
-                            ${w.showMinutes ? "checked" : ""}
-                            onchange="updateWidget('showMinutes',this.checked)">
-                        Minutes
-                    </label>
-
-                    <label class="check">
-                        <input
-                            type="checkbox"
-                            ${w.showSeconds ? "checked" : ""}
-                            onchange="updateWidget('showSeconds',this.checked)">
-                        Seconds
-                    </label>
-
-                </div>
-            </div>
-
-            <div class="action-bar">
-
-                <button class="primary" onclick="startSelected()">
-                    START
-                </button>
-
-                <button class="secondary" onclick="pauseSelected()">
-                    PAUSE
-                </button>
-
-                <button class="secondary" onclick="resetSelected()">
-                    RESET
-                </button>
-
-            </div>
-        `;
-    }
+  const isDown =
+    w.mode === "countdown";
 
 
-    if (w.type === "text") {
-
-        html += `
-            <div class="field">
-                <label>Text</label>
-
-                <textarea
-                    oninput="updateWidget('text',this.value)"
-                >${escapeHTML(w.text)}</textarea>
-            </div>
-        `;
-    }
+  const running =
+    w.running;
 
 
-    html += `
-        <hr style="border:0;border-top:1px solid #222c40;margin:18px 0">
+  el.innerHTML = `
+
+    <div class="stack">
+
+      <div class="field">
+
+        <label>Name</label>
+
+        <input
+          value="${escapeAttr(w.name)}"
+          oninput="
+            setField(
+              'name',
+              this.value
+            )
+          "
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>Mode</label>
+
+        <select
+          onchange="
+            changeTimerMode(
+              this.value
+            )
+          "
+        >
+
+          <option
+            value="countup"
+            ${!isDown ? "selected" : ""}
+          >
+            Count Up
+          </option>
+
+
+          <option
+            value="countdown"
+            ${isDown ? "selected" : ""}
+          >
+            Countdown
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="three">
 
         <div class="field">
-            <label>Font</label>
 
-            <select onchange="updateWidget('font',this.value)">
+          <label>Hours</label>
 
-                ${fontOption("Arial", w.font)}
-                ${fontOption("Verdana", w.font)}
-                ${fontOption("Tahoma", w.font)}
-                ${fontOption("Trebuchet MS", w.font)}
-                ${fontOption("Georgia", w.font)}
-                ${fontOption("Times New Roman", w.font)}
-                ${fontOption("Courier New", w.font)}
-                ${fontOption("Impact", w.font)}
-                ${fontOption("Inter", w.font)}
+          <input
+            type="number"
+            min="0"
+            value="${w.hours}"
+            onchange="
+              setField(
+                'hours',
+                this.value
+              )
+            "
+          >
 
-            </select>
         </div>
+
 
         <div class="field">
-            <label>Font Size</label>
 
-            <input
-                type="number"
-                min="8"
-                max="300"
-                value="${w.fontSize}"
-                oninput="updateNumber('fontSize',this.value,300,8)">
+          <label>Minutes</label>
+
+          <input
+            type="number"
+            min="0"
+            value="${w.minutes}"
+            onchange="
+              setField(
+                'minutes',
+                this.value
+              )
+            "
+          >
+
         </div>
+
 
         <div class="field">
-            <label>Font Weight</label>
 
-            <select onchange="updateWidget('weight',this.value)">
+          <label>Seconds</label>
 
-                <option value="400" ${w.weight === "400" ? "selected" : ""}>
-                    Regular
-                </option>
+          <input
+            type="number"
+            min="0"
+            value="${w.seconds}"
+            onchange="
+              setField(
+                'seconds',
+                this.value
+              )
+            "
+          >
 
-                <option value="500" ${w.weight === "500" ? "selected" : ""}>
-                    Medium
-                </option>
-
-                <option value="600" ${w.weight === "600" ? "selected" : ""}>
-                    Semi Bold
-                </option>
-
-                <option value="700" ${w.weight === "700" ? "selected" : ""}>
-                    Bold
-                </option>
-
-                <option value="800" ${w.weight === "800" ? "selected" : ""}>
-                    Extra Bold
-                </option>
-
-                <option value="900" ${w.weight === "900" ? "selected" : ""}>
-                    Black
-                </option>
-
-            </select>
         </div>
 
-        <div class="field">
-            <label>Text Color</label>
-
-            <div class="color-row">
-
-                <input
-                    type="color"
-                    value="${validColor(w.color) ? w.color : "#ffffff"}"
-                    oninput="updateWidget('color',this.value)">
-
-                <input
-                    type="text"
-                    value="${escapeAttr(w.color)}"
-                    oninput="updateWidget('color',this.value)">
-
-            </div>
-        </div>
-
-        <div class="field">
-            <label>Position</label>
-
-            <div class="position-grid">
-
-                <div>
-                    <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        value="${w.x}"
-                        oninput="updateNumber('x',this.value,100,0)">
-                    <div class="small-note">Horizontal %</div>
-                </div>
-
-                <div>
-                    <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        value="${w.y}"
-                        oninput="updateNumber('y',this.value,100,0)">
-                    <div class="small-note">Vertical %</div>
-                </div>
-
-            </div>
-        </div>
-    `;
-
-    editor.innerHTML = html;
-}
+      </div>
 
 
-/* =========================================================
-   EDITOR HELPERS
-========================================================= */
+      <div class="checks">
 
-function fontOption(name, current) {
+        <label class="check">
 
-    return `
-        <option value="${escapeAttr(name)}"
-            ${current === name ? "selected" : ""}>
-            ${escapeHTML(name)}
-        </option>
-    `;
-}
+          <input
+            type="checkbox"
+            ${w.showHours ? "checked" : ""}
+            onchange="
+              setField(
+                'showHours',
+                this.checked
+              )
+            "
+          >
 
+          Hours
 
-function updateWidget(key, value) {
-
-    const w = getSelected();
-
-    if (!w) return;
-
-    w[key] = value;
-
-    /*
-       IMPORTANT:
-       Changing timer duration invalidates an old start timestamp.
-       This prevents an edited timer from unexpectedly continuing
-       from an older session.
-    */
-
-    if (
-        ["hours", "minutes", "seconds", "days", "mode"].includes(key)
-        && (w.type === "timer" || w.type === "countdown")
-    ) {
-        w.running = false;
-        w.startedAt = null;
-        w.stoppedAt = null;
-    }
-
-    renderAll();
-}
+        </label>
 
 
-function updateNumber(key, value, max, min = 0) {
+        <label class="check">
 
-    const w = getSelected();
+          <input
+            type="checkbox"
+            ${w.showMinutes ? "checked" : ""}
+            onchange="
+              setField(
+                'showMinutes',
+                this.checked
+              )
+            "
+          >
 
-    if (!w) return;
+          Minutes
 
-    let n = Number(value);
-
-    if (!Number.isFinite(n)) n = min;
-
-    n = Math.max(min, Math.min(max, Math.floor(n)));
-
-    w[key] = n;
-
-    if (
-        ["hours", "minutes", "seconds", "days"].includes(key)
-        && (w.type === "timer" || w.type === "countdown")
-    ) {
-        w.running = false;
-        w.startedAt = null;
-        w.stoppedAt = null;
-    }
-
-    renderAll();
-}
+        </label>
 
 
-/* =========================================================
-   TIMER ENGINE
-========================================================= */
+        <label class="check">
 
-function startSelected() {
+          <input
+            type="checkbox"
+            ${w.showSeconds ? "checked" : ""}
+            onchange="
+              setField(
+                'showSeconds',
+                this.checked
+              )
+            "
+          >
 
-    const w = getSelected();
+          Seconds
 
-    if (!w) return;
+        </label>
 
-    if (w.type !== "timer" && w.type !== "countdown") return;
+      </div>
 
-    /*
-       If this is a fresh start:
-       startedAt = current exact timestamp.
 
-       If it was paused:
-       we create a new timestamp based on the remaining time,
-       so the countdown resumes correctly.
-    */
+      <div class="toolbar">
 
-    const now = Date.now();
+        ${
+          running
 
-    if (w.type === "timer") {
+          ? `
+            <button
+              onclick="
+                pauseTimer('${w.id}')
+              "
+            >
+              Pause
+            </button>
+          `
 
-        const current = getBuilderTimerSeconds(w);
-
-        if (current <= 0 && w.mode === "countdown") {
-            resetSelected();
-            return;
+          : `
+            <button
+              class="primary"
+              onclick="
+                startTimer('${w.id}')
+              "
+            >
+              Start
+            </button>
+          `
         }
 
-        if (w.mode === "countdown") {
 
-            if (w.stoppedAt !== null && w.startedAt !== null) {
+        <button
+          onclick="
+            resetTimer('${w.id}')
+          "
+        >
+          Reset
+        </button>
 
-                w.startedAt = now - (
-                    (getInitialTimerSeconds(w) - current) * 1000
-                );
+      </div>
 
-            } else {
 
-                w.startedAt = now;
-            }
+      <div class="notice">
 
-        } else {
+        Current:
 
-            /*
-               Count-up timer starts from the configured starting time.
-            */
-
-            w.startedAt = now;
-        }
-
-    } else {
-
-        const current = getBuilderCountdownSeconds(w);
-
-        if (current <= 0) {
-            resetSelected();
-            return;
-        }
-
-        if (w.stoppedAt !== null && w.startedAt !== null) {
-
-            w.startedAt = now - (
-                (getInitialCountdownSeconds(w) - current) * 1000
-            );
-
-        } else {
-
-            w.startedAt = now;
-        }
-    }
-
-    w.running = true;
-    w.stoppedAt = null;
-
-    renderAll();
-}
-
-
-function pauseSelected() {
-
-    const w = getSelected();
-
-    if (!w) return;
-
-    if (w.type !== "timer" && w.type !== "countdown") return;
-
-    if (!w.running) return;
-
-    /*
-       We don't freeze the number in the PRISM URL.
-       We record the pause timestamp so the exact remaining
-       value can be reconstructed.
-    */
-
-    w.stoppedAt = Date.now();
-    w.running = false;
-
-    renderAll();
-}
-
-
-function resetSelected() {
-
-    const w = getSelected();
-
-    if (!w) return;
-
-    if (w.type !== "timer" && w.type !== "countdown") return;
-
-    w.running = false;
-    w.startedAt = null;
-    w.stoppedAt = null;
-
-    renderAll();
-}
-
-
-function getInitialTimerSeconds(w) {
-
-    return (
-        Number(w.hours || 0) * 3600 +
-        Number(w.minutes || 0) * 60 +
-        Number(w.seconds || 0)
-    );
-}
-
-
-function getInitialCountdownSeconds(w) {
-
-    return (
-        Number(w.days || 0) * 86400 +
-        Number(w.hours || 0) * 3600 +
-        Number(w.minutes || 0) * 60 +
-        Number(w.seconds || 0)
-    );
-}
-
-
-function getBuilderTimerSeconds(w) {
-
-    const initial = getInitialTimerSeconds(w);
-
-    if (!w.startedAt) {
-        return initial;
-    }
-
-    if (w.stoppedAt) {
-
-        const elapsed =
-            Math.max(0, w.stoppedAt - w.startedAt) / 1000;
-
-        if (w.mode === "countdown") {
-            return Math.max(0, initial - elapsed);
-        }
-
-        return initial + elapsed;
-    }
-
-    const elapsed =
-        Math.max(0, Date.now() - w.startedAt) / 1000;
-
-    if (w.mode === "countdown") {
-        return Math.max(0, initial - elapsed);
-    }
-
-    return initial + elapsed;
-}
-
-
-function getBuilderCountdownSeconds(w) {
-
-    const initial = getInitialCountdownSeconds(w);
-
-    if (!w.startedAt) {
-        return initial;
-    }
-
-    const endAt =
-        w.startedAt + initial * 1000;
-
-    if (w.stoppedAt) {
-
-        return Math.max(
-            0,
-            (endAt - w.stoppedAt) / 1000
-        );
-    }
-
-    return Math.max(
-        0,
-        (endAt - Date.now()) / 1000
-    );
-}
-
-
-/* =========================================================
-   FORMATTING
-========================================================= */
-
-function formatTimer(totalSeconds, w) {
-
-    totalSeconds = Math.max(0, Math.floor(totalSeconds));
-
-    let hours = Math.floor(totalSeconds / 3600);
-    let minutes = Math.floor((totalSeconds % 3600) / 60);
-    let seconds = totalSeconds % 60;
-
-    const parts = [];
-
-    if (w.showHours) {
-        parts.push(String(hours).padStart(2, "0"));
-    }
-
-    if (w.showMinutes) {
-        parts.push(String(minutes).padStart(2, "0"));
-    }
-
-    if (w.showSeconds) {
-        parts.push(String(seconds).padStart(2, "0"));
-    }
-
-    return parts.length ? parts.join(":") : "0";
-}
-
-
-function formatCountdown(totalSeconds, w) {
-
-    totalSeconds = Math.max(0, Math.floor(totalSeconds));
-
-    const days = Math.floor(totalSeconds / 86400);
-
-    const hours =
-        Math.floor((totalSeconds % 86400) / 3600);
-
-    const minutes =
-        Math.floor((totalSeconds % 3600) / 60);
-
-    const seconds =
-        totalSeconds % 60;
-
-    const parts = [];
-
-    if (w.showDays) {
-        parts.push(String(days).padStart(2, "0"));
-    }
-
-    if (w.showHours) {
-        parts.push(String(hours).padStart(2, "0"));
-    }
-
-    if (w.showMinutes) {
-        parts.push(String(minutes).padStart(2, "0"));
-    }
-
-    if (w.showSeconds) {
-        parts.push(String(seconds).padStart(2, "0"));
-    }
-
-    return parts.length ? parts.join(":") : "0";
-}
-
-
-/* =========================================================
-   DISPLAY VALUE
-========================================================= */
-
-function getWidgetDisplay(w) {
-
-    if (w.type === "text") {
-        return w.text || "";
-    }
-
-    if (w.type === "timer") {
-
-        return formatTimer(
-            getBuilderTimerSeconds(w),
+        <b id="editorTimerValue">
+          ${formatTime(
+            currentSeconds(w),
             w
-        );
-    }
+          )}
+        </b>
 
-    if (w.type === "countdown") {
+        ${
+          running
+          ? " • running"
+          : " • paused"
+        }
 
-        return formatCountdown(
-            getBuilderCountdownSeconds(w),
-            w
-        );
-    }
+      </div>
 
-    return "";
+
+      ${styleFields(w)}
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   STYLE FIELDS
+   ========================================================= */
+
+function styleFields(w){
+
+  return `
+
+    <div class="two">
+
+      <div class="field">
+
+        <label>Font</label>
+
+        <select
+          onchange="
+            setField(
+              'font',
+              this.value
+            )
+          "
+        >
+
+          ${
+            [
+              "Inter",
+              "Arial",
+              "Georgia",
+              "Impact",
+              "Roboto",
+              "monospace",
+              "sans-serif"
+            ].map(
+              f => `
+                <option
+                  ${w.font === f ? "selected" : ""}
+                >
+                  ${f}
+                </option>
+              `
+            ).join("")
+          }
+
+        </select>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>Size</label>
+
+        <input
+          type="number"
+          min="8"
+          max="300"
+          value="${w.size}"
+          onchange="
+            setField(
+              'size',
+              this.value
+            )
+          "
+        >
+
+      </div>
+
+    </div>
+
+
+    <div class="two">
+
+      <div class="field">
+
+        <label>Color</label>
+
+        <input
+          type="color"
+          value="${w.color}"
+          onchange="
+            setField(
+              'color',
+              this.value
+            )
+          "
+        >
+
+      </div>
+
+      <div></div>
+
+    </div>
+
+
+    <div class="two">
+
+      <div class="field">
+
+        <label>X position (%)</label>
+
+        <input
+          type="number"
+          min="0"
+          max="100"
+          value="${w.x}"
+          onchange="
+            setField(
+              'x',
+              this.value
+            )
+          "
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>Y position (%)</label>
+
+        <input
+          type="number"
+          min="0"
+          max="100"
+          value="${w.y}"
+          onchange="
+            setField(
+              'y',
+              this.value
+            )
+          "
+        >
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   CHANGE TIMER MODE
+   ========================================================= */
+
+function changeTimerMode(mode){
+
+  const w = getSelected();
+
+
+  if(
+    !w ||
+    w.type !== "timer"
+  ){
+    return;
+  }
+
+
+  w.running = false;
+
+  w.startedAt = null;
+
+  w.mode = mode;
+
+
+  if(mode === "countdown"){
+
+    w.pausedRemaining =
+      durationSeconds(w);
+
+    delete w.pausedElapsed;
+
+  }
+
+  else{
+
+    w.pausedElapsed = 0;
+
+    delete w.pausedRemaining;
+
+  }
+
+
+  saveLocal();
+
+  renderAll();
+
 }
 
 
 /* =========================================================
    PREVIEW
-========================================================= */
+   ========================================================= */
 
-function renderPreview() {
+function renderPreview(){
 
-    const preview = document.getElementById("preview");
-
-    preview.querySelectorAll(".preview-widget").forEach(el => {
-        el.remove();
-    });
-
-    if (!widgets.length) {
-
-        if (!preview.querySelector(".preview-empty")) {
-
-            const empty = document.createElement("div");
-
-            empty.className = "preview-empty";
-            empty.textContent = "Add a widget to begin";
-
-            preview.appendChild(empty);
-        }
-
-        return;
-
-    } else {
-
-        const empty = preview.querySelector(".preview-empty");
-
-        if (empty) empty.remove();
-    }
+  const el =
+    document.getElementById(
+      "preview"
+    );
 
 
-    widgets.forEach(w => {
+  if(!widgets.length){
 
-        const el = document.createElement("div");
+    el.innerHTML =
+      '<div class="empty">Preview is empty.</div>';
 
-        el.className = "preview-widget";
+    return;
 
-        el.textContent = getWidgetDisplay(w);
+  }
 
-        el.style.left = w.x + "%";
-        el.style.top = w.y + "%";
 
-        el.style.fontFamily = w.font;
-        el.style.fontSize = w.fontSize + "px";
-        el.style.fontWeight = w.weight;
-        el.style.color = validColor(w.color)
-            ? w.color
-            : "#ffffff";
+  el.innerHTML =
+    widgets.map(w => {
 
-        el.style.textShadow =
-            "0 2px 8px rgba(0,0,0,.45)";
+      let content = "";
 
-        preview.appendChild(el);
-    });
+
+      if(w.type === "text"){
+
+        content =
+          w.text || "";
+
+      }
+
+      else{
+
+        content =
+          formatTime(
+            currentSeconds(w),
+            w
+          );
+
+      }
+
+
+      return `
+
+        <div
+          class="stage-widget"
+          style="
+            left:${w.x}%;
+            top:${w.y}%;
+            font-family:${escapeAttr(w.font)};
+            font-size:${w.size}px;
+            color:${escapeAttr(w.color)}
+          "
+        >
+
+          ${escapeHtml(content)}
+
+        </div>
+
+      `;
+
+    }).join("");
+
 }
 
 
 /* =========================================================
-   BUILDER CLOCK
-========================================================= */
+   RENDER EVERYTHING
+   ========================================================= */
 
-builderTick = setInterval(() => {
+function renderAll(){
 
-    if (!widgets.length) return;
+  renderList();
 
-    const hasRunning =
-        widgets.some(
-            w =>
-                (w.type === "timer" || w.type === "countdown")
-                && w.running
-        );
+  renderEditor();
 
-    if (hasRunning) {
-        renderPreview();
-        updateMainStatus();
-    }
+  renderPreview();
 
-}, 250);
+  saveLocal();
 
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-function updateMainStatus() {
-
-    const status = document.getElementById("mainStatus");
-
-    if (!widgets.length) {
-
-        status.className = "status";
-        status.textContent =
-            "Configure your widgets. Add a widget to begin.";
-
-        return;
-    }
-
-    const running = widgets.filter(
-        w =>
-            (w.type === "timer" || w.type === "countdown")
-            && w.running
-    );
-
-    if (running.length) {
-
-        status.className = "status running";
-
-        status.textContent =
-            "Timer running. The exact start timestamp will be embedded in the PRISM URL.";
-
-        return;
-    }
-
-    const prepared = widgets.filter(
-        w =>
-            (w.type === "timer" || w.type === "countdown")
-            && w.startedAt
-        );
-
-    if (prepared.length) {
-
-        status.className = "status ready";
-
-        status.textContent =
-            "Timer is prepared. Copy the PRISM URL to create the live overlay.";
-
-        return;
-    }
-
-    status.className = "status";
-
-    status.textContent =
-        "Configure your widgets. For timers, press START before copying the PRISM URL.";
 }
 
 
 /* =========================================================
    APPLY
-========================================================= */
+   ========================================================= */
 
-function applyChanges() {
+function applyChanges(){
 
-    renderAll();
+  saveLocal();
 
-    const status = document.getElementById("mainStatus");
+  renderAll();
 
-    status.className = "status ready";
-    status.textContent =
-        "Changes applied to the preview.";
+  setStatus(
+    "Changes applied."
+  );
+
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+function setStatus(text){
+
+  document.getElementById(
+    "status"
+  ).textContent = text;
+
+}
+
+
+/* =========================================================
+   CLEAR
+   ========================================================= */
+
+function clearAll(){
+
+  if(
+    !confirm(
+      "Clear all widgets?"
+    )
+  ){
+    return;
+  }
+
+
+  widgets = [];
+
+  selectedId = null;
+
+  localStorage.removeItem(
+    STORAGE_KEY
+  );
+
+  renderAll();
+
+  setStatus(
+    "All widgets cleared."
+  );
+
 }
 
 
 /* =========================================================
    URL CONFIGURATION
-========================================================= */
+   ========================================================= */
 
-function encodeConfig() {
+function buildConfig(){
 
-    const cleanWidgets = widgets.map(w => ({
-        ...w
-    }));
+  /*
+    THIS IS THE MAIN FIX.
 
-    const json = JSON.stringify({
-        version: 2,
-        widgets: cleanWidgets
-    });
+    We copy the LIVE timer state.
 
-    return btoa(
-        encodeURIComponent(json)
-            .replace(/%([0-9A-F]{2})/g,
-                function(match, p1) {
-                    return String.fromCharCode(
-                        parseInt(p1, 16)
-                    );
-                }
-            )
-    );
+    If a timer is running:
+
+      startedAt
+      running
+      pausedRemaining / pausedElapsed
+
+    are included in the URL.
+
+    Therefore the overlay does NOT receive a frozen
+    "remaining = 22963" value and stop.
+
+    Instead it receives the exact time at which the
+    timer started.
+  */
+
+  return {
+
+    version:2,
+
+    widgets:
+
+      widgets.map(w => {
+
+        const copy =
+          JSON.parse(
+            JSON.stringify(w)
+          );
+
+
+        if(
+          copy.type === "timer"
+        ){
+
+          if(copy.running){
+
+            /*
+              Preserve the exact timestamp.
+            */
+
+            copy.startedAt =
+              Number(
+                copy.startedAt
+              );
+
+
+            if(
+              copy.mode === "countdown"
+            ){
+
+              copy.pausedRemaining =
+                Number(
+                  copy.pausedRemaining ??
+                  durationSeconds(copy)
+                );
+
+            }
+
+            else{
+
+              copy.pausedElapsed =
+                Number(
+                  copy.pausedElapsed || 0
+                );
+
+            }
+
+          }
+
+          else{
+
+            copy.startedAt = null;
+
+          }
+
+        }
+
+
+        return copy;
+
+      })
+
+  };
+
 }
 
 
-function decodeConfig(encoded) {
+/* =========================================================
+   ENCODE CONFIG
+   ========================================================= */
 
-    try {
+function encodeConfig(config){
 
-        const json = decodeURIComponent(
-            Array.prototype.map.call(
-                atob(encoded),
-                function(c) {
-                    return "%" +
-                        ("00" + c.charCodeAt(0).toString(16))
-                        .slice(-2);
-                }
-            ).join("")
-        );
+  const json =
+    JSON.stringify(config);
 
-        return JSON.parse(json);
 
-    } catch (error) {
+  const bytes =
+    new TextEncoder().encode(
+      json
+    );
 
-        console.error("Could not decode configuration:", error);
 
-        return null;
-    }
+  let binary = "";
+
+  const chunk = 0x8000;
+
+
+  for(
+    let i = 0;
+    i < bytes.length;
+    i += chunk
+  ){
+
+    binary += String.fromCharCode(
+      ...bytes.subarray(
+        i,
+        i + chunk
+      )
+    );
+
+  }
+
+
+  return btoa(binary);
+
+}
+
+
+/* =========================================================
+   DECODE CONFIG
+   ========================================================= */
+
+function decodeConfig(encoded){
+
+  try{
+
+    const binary =
+      atob(encoded);
+
+
+    const bytes =
+      Uint8Array.from(
+        binary,
+        c => c.charCodeAt(0)
+      );
+
+
+    return JSON.parse(
+      new TextDecoder().decode(
+        bytes
+      )
+    );
+
+  }
+
+  catch(e){
+
+    return null;
+
+  }
+
 }
 
 
 /* =========================================================
    COPY PRISM URL
-========================================================= */
+   ========================================================= */
 
-async function copyPrismURL() {
+async function copyPrismURL(){
 
-    if (!widgets.length) {
+  /*
+    ALWAYS BUILD THE URL FROM THE CURRENT LIVE STATE.
 
-        alert("Add at least one widget first.");
-        return;
-    }
+    This prevents the old frozen "remaining" value
+    problem.
+  */
 
-
-    /*
-       IMPORTANT:
-       We intentionally preserve startedAt.
-
-       This is the key fix.
-
-       PRISM will receive the timestamp and calculate
-       the timer independently.
-    */
-
-    const config = encodeConfig();
-
-    const baseURL =
-        window.location.origin +
-        window.location.pathname;
-
-    const url =
-        baseURL +
-        "?overlay=1#config=" +
-        encodeURIComponent(config);
+  const config =
+    buildConfig();
 
 
-    try {
+  const encoded =
+    encodeConfig(
+      config
+    );
 
-        await navigator.clipboard.writeText(url);
 
-        const status =
-            document.getElementById("mainStatus");
+  const url =
+    location.origin +
+    location.pathname +
+    "?overlay=1#config=" +
+    encodeURIComponent(
+      encoded
+    );
 
-        status.className = "status ready";
 
-        status.innerHTML =
-            "<strong>PRISM URL copied.</strong><br>" +
-            "Paste this URL into PRISM's Web Page source. " +
-            "The timer will use its recorded start timestamp.";
+  try{
 
-        alert(
-            "PRISM URL copied!\n\n" +
-            "Paste it into PRISM Web Page source."
-        );
+    await navigator.clipboard.writeText(
+      url
+    );
 
-    } catch (error) {
 
-        /*
-           Fallback for browsers where clipboard permission
-           is unavailable.
-        */
+    setStatus(
+      "PRISM URL copied. Open the copied URL in Chrome to test it."
+    );
 
-        prompt(
-            "Copy this PRISM URL:",
-            url
-        );
-    }
+  }
+
+  catch(e){
+
+    prompt(
+      "Copy this PRISM URL:",
+      url
+    );
+
+  }
+
 }
 
 
 /* =========================================================
    OVERLAY MODE
-========================================================= */
+   ========================================================= */
 
-function loadOverlay() {
+function initOverlay(){
 
-    const params =
-        new URLSearchParams(window.location.search);
+  document.getElementById(
+    "builder"
+  ).style.display = "none";
 
-    if (params.get("overlay") !== "1") {
-        return false;
-    }
 
-    document.body.innerHTML = `
-        <div id="overlayContainer"
-             class="overlay-container">
-        </div>
+  document.body.className =
+    "overlay-body";
 
-        <div class="overlay-status">
-            PRISM OVERLAY
-        </div>
-    `;
 
-    document.body.className = "overlay-page";
-
-    const hash =
-        window.location.hash;
-
-    if (!hash.startsWith("#config=")) {
-
-        return true;
-    }
-
-    const encoded =
-        decodeURIComponent(
-            hash.substring("#config=".length)
-        );
-
-    const config =
-        decodeConfig(encoded);
-
-    if (!config || !Array.isArray(config.widgets)) {
-
-        console.error(
-            "Invalid PRISM widget configuration."
-        );
-
-        return true;
-    }
-
-    /*
-       Normalize old / incomplete configurations.
-    */
-
-    widgets =
-        config.widgets.map(w => {
-
-            return {
-                ...defaultWidget(w.type || "text"),
-                ...w
-            };
-        });
-
-    renderOverlay();
-
-    setInterval(
-        renderOverlay,
-        250
+  const params =
+    new URLSearchParams(
+      location.search
     );
 
-    return true;
-}
 
+  const encoded =
+    location.hash.startsWith(
+      "#config="
+    )
 
-/* =========================================================
-   OVERLAY RENDER
-========================================================= */
+    ? decodeURIComponent(
+        location.hash.slice(8)
+      )
 
-function renderOverlay() {
+    : "";
 
-    const container =
-        document.getElementById("overlayContainer");
 
-    if (!container) return;
-
-    container.innerHTML = "";
-
-
-    widgets.forEach(w => {
-
-        const el =
-            document.createElement("div");
-
-        el.className =
-            "overlay-widget";
-
-        el.textContent =
-            getOverlayDisplay(w);
-
-        el.style.left =
-            w.x + "%";
-
-        el.style.top =
-            w.y + "%";
-
-        el.style.fontFamily =
-            w.font;
-
-        el.style.fontSize =
-            w.fontSize + "px";
-
-        el.style.fontWeight =
-            w.weight;
-
-        el.style.color =
-            validColor(w.color)
-                ? w.color
-                : "#ffffff";
-
-        /*
-           Keep the actual text crisp.
-           No canvas rendering and no image conversion.
-        */
-
-        el.style.webkitFontSmoothing =
-            "antialiased";
-
-        el.style.textRendering =
-            "geometricPrecision";
-
-        el.style.textShadow =
-            "0 2px 8px rgba(0,0,0,.45)";
-
-        container.appendChild(el);
-    });
-}
-
-
-/* =========================================================
-   OVERLAY TIMER CALCULATION
-========================================================= */
-
-function getOverlayDisplay(w) {
-
-    if (w.type === "text") {
-        return w.text || "";
-    }
-
-
-    /*
-       TIMER
-    */
-
-    if (w.type === "timer") {
-
-        const initial =
-            getInitialTimerSeconds(w);
-
-        /*
-           Not started:
-           display the configured starting value.
-        */
-
-        if (!w.startedAt) {
-
-            return formatTimer(
-                initial,
-                w
-            );
-        }
-
-
-        /*
-           PAUSED:
-           stoppedAt freezes the calculation at
-           the exact pause timestamp.
-        */
-
-        const referenceTime =
-            w.stoppedAt
-                ? w.stoppedAt
-                : Date.now();
-
-
-        const elapsed =
-            Math.max(
-                0,
-                referenceTime - w.startedAt
-            ) / 1000;
-
-
-        let value;
-
-
-        if (w.mode === "countdown") {
-
-            value =
-                Math.max(
-                    0,
-                    initial - elapsed
-                );
-
-        } else {
-
-            value =
-                initial + elapsed;
-        }
-
-
-        return formatTimer(
-            value,
-            w
-        );
-    }
-
-
-    /*
-       COUNTDOWN
-    */
-
-    if (w.type === "countdown") {
-
-        const duration =
-            getInitialCountdownSeconds(w);
-
-
-        if (!w.startedAt) {
-
-            return formatCountdown(
-                duration,
-                w
-            );
-        }
-
-
-        const endAt =
-            w.startedAt +
-            duration * 1000;
-
-
-        const referenceTime =
-            w.stoppedAt
-                ? w.stoppedAt
-                : Date.now();
-
-
-        const remaining =
-            Math.max(
-                0,
-                (endAt - referenceTime) / 1000
-            );
-
-
-        return formatCountdown(
-            remaining,
-            w
-        );
-    }
-
-
-    return "";
-}
-
-
-/* =========================================================
-   RESET EVERYTHING
-========================================================= */
-
-function resetAll() {
-
-    if (!widgets.length) return;
-
-    const confirmed =
-        confirm(
-            "Remove all widgets?"
-        );
-
-    if (!confirmed) return;
-
-    widgets = [];
-    selectedId = null;
-
-    renderAll();
-}
-
-
-/* =========================================================
-   VALIDATION / ESCAPING
-========================================================= */
-
-function validColor(value) {
-
-    return /^#[0-9A-Fa-f]{6}$/.test(
-        String(value || "")
+  const config =
+    decodeConfig(
+      encoded
     );
-}
 
 
-function escapeHTML(value) {
+  if(
+    !config ||
+    !Array.isArray(
+      config.widgets
+    )
+  ){
 
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
+    document.getElementById(
+      "overlay"
+    ).innerHTML = "";
+
+    return;
+
+  }
 
 
-function escapeAttr(value) {
-    return escapeHTML(value);
+  const overlay =
+    document.getElementById(
+      "overlay"
+    );
+
+
+  overlay.style.display =
+    "block";
+
+
+  const list =
+    config.widgets;
+
+
+  /*
+    The overlay runs its own clock.
+
+    It does NOT depend on the builder page.
+
+    It does NOT depend on localStorage.
+
+    It does NOT depend on the builder's timer.
+
+    It only needs:
+
+      startedAt
+      duration
+      running
+  */
+
+  function draw(){
+
+    const now =
+      Date.now();
+
+
+    overlay.innerHTML =
+      list.map(w => {
+
+        let content = "";
+
+
+        if(
+          w.type === "text"
+        ){
+
+          content =
+            w.text || "";
+
+        }
+
+        else{
+
+          content =
+            formatOverlayTimer(
+              w,
+              now
+            );
+
+        }
+
+
+        return `
+
+          <div
+            class="overlay-widget"
+            style="
+              left:${Number(w.x) || 0}%;
+              top:${Number(w.y) || 0}%;
+              font-family:${escapeAttr(
+                w.font || "Inter"
+              )};
+              font-size:${Number(
+                w.size || 48
+              )}px;
+              color:${escapeAttr(
+                w.color || "#fff"
+              )}
+            "
+          >
+
+            ${escapeHtml(content)}
+
+          </div>
+
+        `;
+
+      }).join("");
+
+  }
+
+
+  draw();
+
+
+  /*
+    Update four times per second.
+
+    The displayed value itself changes once per second,
+    but 250ms gives smoother response.
+  */
+
+  setInterval(
+    draw,
+    250
+  );
+
 }
 
 
 /* =========================================================
-   INITIALIZATION
-========================================================= */
+   OVERLAY TIMER ENGINE
+   ========================================================= */
 
-if (!loadOverlay()) {
+function formatOverlayTimer(
+  w,
+  now
+){
 
-    /*
-       Start with one timer automatically,
-       matching the original builder experience.
-    */
+  let total;
+
+
+  /* COUNTDOWN */
+
+  if(
+    w.mode === "countdown"
+  ){
+
+    const duration =
+      (Number(w.hours) || 0) * 3600 +
+      (Number(w.minutes) || 0) * 60 +
+      (Number(w.seconds) || 0);
+
+
+    if(
+      w.running &&
+      Number.isFinite(
+        Number(w.startedAt)
+      )
+    ){
+
+      /*
+        EXACT FIX:
+
+        Current remaining time is calculated from
+        the real current time minus the timestamp
+        stored when START was pressed.
+      */
+
+      const elapsed =
+        Math.floor(
+          (
+            now -
+            Number(w.startedAt)
+          ) / 1000
+        );
+
+
+      total =
+        Math.max(
+          0,
+          duration - elapsed
+        );
+
+    }
+
+    else if(
+      Number.isFinite(
+        Number(w.pausedRemaining)
+      )
+    ){
+
+      total =
+        Math.max(
+          0,
+          Number(w.pausedRemaining)
+        );
+
+    }
+
+    else{
+
+      total =
+        duration;
+
+    }
+
+  }
+
+
+  /* COUNT UP */
+
+  else{
+
+    const paused =
+      Number(
+        w.pausedElapsed
+      ) || 0;
+
+
+    if(
+      w.running &&
+      Number.isFinite(
+        Number(w.startedAt)
+      )
+    ){
+
+      const elapsed =
+        Math.floor(
+          (
+            now -
+            Number(w.startedAt)
+          ) / 1000
+        );
+
+
+      total =
+        Math.max(
+          0,
+          paused + elapsed
+        );
+
+    }
+
+    else{
+
+      total =
+        Math.max(
+          0,
+          paused
+        );
+
+    }
+
+  }
+
+
+  return formatTime(
+    total,
+    w
+  );
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(value){
+
+  return String(
+    value ?? ""
+  )
+
+  .replaceAll(
+    "&",
+    "&amp;"
+  )
+
+  .replaceAll(
+    "<",
+    "&lt;"
+  )
+
+  .replaceAll(
+    ">",
+    "&gt;"
+  )
+
+  .replaceAll(
+    '"',
+    "&quot;"
+  )
+
+  .replaceAll(
+    "'",
+    "&#039;"
+  );
+
+}
+
+
+function escapeAttr(value){
+
+  return escapeHtml(
+    value
+  );
+
+}
+
+
+/* =========================================================
+   LOCAL STORAGE
+   ========================================================= */
+
+function saveLocal(){
+
+  try{
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(
+        widgets
+      )
+    );
+
+  }
+
+  catch(e){}
+
+}
+
+
+function loadLocal(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        STORAGE_KEY
+      );
+
+
+    if(raw){
+
+      const parsed =
+        JSON.parse(raw);
+
+
+      if(
+        Array.isArray(parsed)
+      ){
+
+        widgets =
+          parsed;
+
+      }
+
+    }
+
+  }
+
+  catch(e){}
+
+}
+
+
+/* =========================================================
+   STARTUP
+   ========================================================= */
+
+if(
+  location.search.includes(
+    "overlay=1"
+  )
+){
+
+  /*
+    We are opening the special PRISM overlay URL.
+  */
+
+  initOverlay();
+
+}
+
+else{
+
+  /*
+    Normal builder.
+  */
+
+  loadLocal();
+
+
+  if(!widgets.length){
 
     const first =
-        defaultWidget("timer");
+      defaultWidget(
+        "timer"
+      );
 
-    widgets.push(first);
+
+    widgets.push(
+      first
+    );
+
 
     selectedId =
-        first.id;
+      first.id;
 
-    renderAll();
+  }
+
+  else{
+
+    selectedId =
+      widgets[0].id;
+
+  }
+
+
+  /*
+    Repair old saved widgets.
+  */
+
+  widgets.forEach(w => {
+
+    if(
+      w.type === "timer" &&
+      w.mode === "countdown" &&
+      !w.running &&
+      !Number.isFinite(
+        Number(w.pausedRemaining)
+      )
+    ){
+
+      w.pausedRemaining =
+        durationSeconds(w);
+
+    }
+
+
+    if(
+      w.type === "timer" &&
+      w.mode === "countup" &&
+      !w.running &&
+      !Number.isFinite(
+        Number(w.pausedElapsed)
+      )
+    ){
+
+      w.pausedElapsed = 0;
+
+    }
+
+  });
+
+
+  renderAll();
+
+
+  /*
+    Builder display refresh.
+  */
+
+  setInterval(
+    () => {
+
+      renderPreview();
+
+
+      const w =
+        getSelected();
+
+
+      const valueEl =
+        document.getElementById(
+          "editorTimerValue"
+        );
+
+
+      if(
+        w &&
+        w.type === "timer" &&
+        valueEl
+      ){
+
+        valueEl.textContent =
+          formatTime(
+            currentSeconds(w),
+            w
+          );
+
+
+        /*
+          Automatically stop a countdown
+          when it reaches zero.
+        */
+
+        if(
+          w.running &&
+          w.mode === "countdown" &&
+          currentSeconds(w) <= 0
+        ){
+
+          w.running = false;
+
+          w.startedAt = null;
+
+          w.pausedRemaining = 0;
+
+          renderAll();
+
+        }
+
+      }
+
+    },
+
+    250
+
+  );
+
 }
 
 </script>
