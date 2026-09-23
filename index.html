@@ -122,6 +122,16 @@ input,select{
   padding:9px;
 }
 
+input[type="range"]{
+  padding:0;
+  accent-color:#fff;
+}
+
+input[type="color"]{
+  height:40px;
+  padding:4px;
+}
+
 .two{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -188,7 +198,8 @@ input,select{
   position:relative;
   height:420px;
   overflow:hidden;
-  background:transparent;
+  background:
+    linear-gradient(135deg,#151a23,#090c12);
 }
 
 .stage-widget{
@@ -263,6 +274,72 @@ input,select{
   text-rendering:geometricPrecision;
 }
 
+/* =========================================================
+   BLUR WIDGET
+   ========================================================= */
+
+.blur-widget{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+
+  /*
+    backdrop-filter is what makes the area underneath
+    the PRISM browser overlay become blurred.
+  */
+
+  backdrop-filter:blur(var(--blur-amount));
+  -webkit-backdrop-filter:blur(var(--blur-amount));
+
+  background:rgba(255,255,255,var(--blur-opacity));
+
+  overflow:hidden;
+}
+
+/*
+  The soft boundary is created using a mask.
+  The center remains fully blurred while the edges
+  gradually become transparent.
+*/
+
+.blur-widget.soft{
+  -webkit-mask-image:radial-gradient(
+    ellipse at center,
+    #000 55%,
+    rgba(0,0,0,.85) 68%,
+    rgba(0,0,0,.5) 82%,
+    transparent 100%
+  );
+
+  mask-image:radial-gradient(
+    ellipse at center,
+    #000 55%,
+    rgba(0,0,0,.85) 68%,
+    rgba(0,0,0,.5) 82%,
+    transparent 100%
+  );
+}
+
+.blur-widget.soft-extra{
+  -webkit-mask-image:radial-gradient(
+    ellipse at center,
+    #000 35%,
+    rgba(0,0,0,.9) 52%,
+    rgba(0,0,0,.6) 68%,
+    rgba(0,0,0,.25) 84%,
+    transparent 100%
+  );
+
+  mask-image:radial-gradient(
+    ellipse at center,
+    #000 35%,
+    rgba(0,0,0,.9) 52%,
+    rgba(0,0,0,.6) 68%,
+    rgba(0,0,0,.25) 84%,
+    transparent 100%
+  );
+}
+
 @media(max-width:850px){
   .grid{
     grid-template-columns:1fr;
@@ -282,7 +359,7 @@ input,select{
   <h1>Study Stream Widget Builder</h1>
 
   <div class="sub">
-    Create timers, countdowns and text overlays for PRISM Live Studio.
+    Create timers, countdowns, text and blur overlays for PRISM Live Studio.
   </div>
 
   <div class="grid">
@@ -292,9 +369,23 @@ input,select{
       <h2>Widgets</h2>
 
       <div class="toolbar" style="margin-bottom:12px">
-        <button onclick="addWidget('timer')">+ Timer</button>
-        <button onclick="addWidget('countdown')">+ Countdown</button>
-        <button onclick="addWidget('text')">+ Text</button>
+
+        <button onclick="addWidget('timer')">
+          + Timer
+        </button>
+
+        <button onclick="addWidget('countdown')">
+          + Countdown
+        </button>
+
+        <button onclick="addWidget('text')">
+          + Text
+        </button>
+
+        <button onclick="addWidget('blur')">
+          + Blur
+        </button>
+
       </div>
 
       <div id="widgetList" class="widget-list"></div>
@@ -356,7 +447,8 @@ input,select{
    BASIC DATA
    ========================================================= */
 
-const STORAGE_KEY = "study-stream-widget-builder-v3";
+const STORAGE_KEY =
+  "study-stream-widget-builder-v4";
 
 let widgets = [];
 let selectedId = null;
@@ -367,12 +459,16 @@ let selectedId = null;
    ========================================================= */
 
 function uid(){
+
   return Math.random().toString(36).slice(2,10)
        + Date.now().toString(36);
+
 }
 
 
 function defaultWidget(type){
+
+  /* TEXT */
 
   if(type === "text"){
 
@@ -391,11 +487,73 @@ function defaultWidget(type){
   }
 
 
+  /* BLUR */
+
+  if(type === "blur"){
+
+    return {
+
+      id:uid(),
+
+      type:"blur",
+
+      name:"Blur",
+
+      /*
+        Shape:
+        rectangle
+        square
+        circle
+        oval
+      */
+
+      shape:"rectangle",
+
+      x:50,
+      y:50,
+
+      width:25,
+      height:20,
+
+      /*
+        Blur strength in pixels.
+      */
+
+      blur:18,
+
+      /*
+        Boundary:
+        hard
+        soft
+        extra-soft
+      */
+
+      boundary:"hard",
+
+      /*
+        Very subtle transparent white layer.
+        This helps establish the backdrop-filter area.
+      */
+
+      opacity:0.03,
+
+      borderRadius:0
+
+    };
+
+  }
+
+
+  /* COUNTDOWN */
+
   if(type === "countdown"){
 
     return {
+
       id:uid(),
+
       type:"timer",
+
       name:"Countdown",
 
       mode:"countdown",
@@ -420,10 +578,13 @@ function defaultWidget(type){
       startedAt:null,
 
       pausedRemaining:1800
+
     };
 
   }
 
+
+  /* TIMER */
 
   return {
 
@@ -463,11 +624,13 @@ function defaultWidget(type){
 
 function addWidget(type){
 
-  const w = defaultWidget(type);
+  const w =
+    defaultWidget(type);
 
   widgets.push(w);
 
-  selectedId = w.id;
+  selectedId =
+    w.id;
 
   renderAll();
 
@@ -480,7 +643,9 @@ function addWidget(type){
 
 function getSelected(){
 
-  return widgets.find(w => w.id === selectedId);
+  return widgets.find(
+    w => w.id === selectedId
+  );
 
 }
 
@@ -498,21 +663,10 @@ function durationSeconds(w){
 }
 
 
-/*
-  THIS IS THE IMPORTANT PART.
-
-  For countdown:
-
-  remaining =
-  duration -
-  (current time - startedAt)
-
-  Therefore the URL only needs the original start
-  timestamp. Any browser/WebView can calculate the
-  current timer value itself.
-*/
-
-function currentSeconds(w, now = Date.now()){
+function currentSeconds(
+  w,
+  now = Date.now()
+){
 
   if(w.type !== "timer"){
     return 0;
@@ -523,12 +677,15 @@ function currentSeconds(w, now = Date.now()){
 
   if(w.mode === "countdown"){
 
-    const total = durationSeconds(w);
+    const total =
+      durationSeconds(w);
 
 
     if(
       w.running &&
-      Number.isFinite(Number(w.startedAt))
+      Number.isFinite(
+        Number(w.startedAt)
+      )
     ){
 
       const elapsed =
@@ -567,7 +724,9 @@ function currentSeconds(w, now = Date.now()){
 
   if(
     w.running &&
-    Number.isFinite(Number(w.startedAt))
+    Number.isFinite(
+      Number(w.startedAt)
+    )
   ){
 
     const elapsed =
@@ -595,7 +754,10 @@ function currentSeconds(w, now = Date.now()){
    FORMAT TIMER
    ========================================================= */
 
-function formatTime(totalSeconds, w){
+function formatTime(
+  totalSeconds,
+  w
+){
 
   totalSeconds =
     Math.max(
@@ -605,7 +767,9 @@ function formatTime(totalSeconds, w){
 
 
   const h =
-    Math.floor(totalSeconds / 3600);
+    Math.floor(
+      totalSeconds / 3600
+    );
 
 
   const m =
@@ -622,23 +786,29 @@ function formatTime(totalSeconds, w){
 
 
   if(w.showHours){
+
     parts.push(
       String(h).padStart(2,"0")
     );
+
   }
 
 
   if(w.showMinutes){
+
     parts.push(
       String(m).padStart(2,"0")
     );
+
   }
 
 
   if(w.showSeconds){
+
     parts.push(
       String(s).padStart(2,"0")
     );
+
   }
 
 
@@ -656,7 +826,9 @@ function formatTime(totalSeconds, w){
 function startTimer(id){
 
   const w =
-    widgets.find(x => x.id === id);
+    widgets.find(
+      x => x.id === id
+    );
 
 
   if(
@@ -667,10 +839,9 @@ function startTimer(id){
   }
 
 
-  const now = Date.now();
+  const now =
+    Date.now();
 
-
-  /* COUNTDOWN */
 
   if(w.mode === "countdown"){
 
@@ -686,7 +857,9 @@ function startTimer(id){
       remaining =
         Number(w.pausedRemaining);
 
-    }else{
+    }
+
+    else{
 
       remaining =
         durationSeconds(w);
@@ -702,29 +875,25 @@ function startTimer(id){
     }
 
 
-    /*
-      IMPORTANT:
-      pausedRemaining is kept as the starting
-      point and startedAt becomes the exact
-      timestamp.
-    */
+    w.pausedRemaining =
+      remaining;
 
-    w.pausedRemaining = remaining;
+    w.startedAt =
+      now;
 
-    w.startedAt = now;
-
-    w.running = true;
+    w.running =
+      true;
 
   }
 
 
-  /* COUNT UP */
-
   else{
 
-    w.startedAt = now;
+    w.startedAt =
+      now;
 
-    w.running = true;
+    w.running =
+      true;
 
   }
 
@@ -741,7 +910,9 @@ function startTimer(id){
 function pauseTimer(id){
 
   const w =
-    widgets.find(x => x.id === id);
+    widgets.find(
+      x => x.id === id
+    );
 
 
   if(
@@ -768,9 +939,11 @@ function pauseTimer(id){
   }
 
 
-  w.running = false;
+  w.running =
+    false;
 
-  w.startedAt = null;
+  w.startedAt =
+    null;
 
   renderAll();
 
@@ -784,7 +957,9 @@ function pauseTimer(id){
 function resetTimer(id){
 
   const w =
-    widgets.find(x => x.id === id);
+    widgets.find(
+      x => x.id === id
+    );
 
 
   if(
@@ -795,9 +970,11 @@ function resetTimer(id){
   }
 
 
-  w.running = false;
+  w.running =
+    false;
 
-  w.startedAt = null;
+  w.startedAt =
+    null;
 
 
   if(w.mode === "countdown"){
@@ -809,7 +986,8 @@ function resetTimer(id){
 
   else{
 
-    w.pausedElapsed = 0;
+    w.pausedElapsed =
+      0;
 
   }
 
@@ -863,7 +1041,8 @@ function duplicateWidget(id){
     );
 
 
-  copy.id = uid();
+  copy.id =
+    uid();
 
   copy.name =
     original.name + " Copy";
@@ -871,9 +1050,11 @@ function duplicateWidget(id){
 
   if(copy.type === "timer"){
 
-    copy.running = false;
+    copy.running =
+      false;
 
-    copy.startedAt = null;
+    copy.startedAt =
+      null;
 
 
     if(copy.mode === "countdown"){
@@ -885,7 +1066,8 @@ function duplicateWidget(id){
 
     else{
 
-      copy.pausedElapsed = 0;
+      copy.pausedElapsed =
+        0;
 
     }
 
@@ -894,7 +1076,8 @@ function duplicateWidget(id){
 
   widgets.push(copy);
 
-  selectedId = copy.id;
+  selectedId =
+    copy.id;
 
   renderAll();
 
@@ -905,9 +1088,13 @@ function duplicateWidget(id){
    EDIT FIELDS
    ========================================================= */
 
-function setField(field,value){
+function setField(
+  field,
+  value
+){
 
-  const w = getSelected();
+  const w =
+    getSelected();
 
 
   if(!w){
@@ -921,10 +1108,16 @@ function setField(field,value){
     "y",
     "hours",
     "minutes",
-    "seconds"
+    "seconds",
+    "width",
+    "height",
+    "blur",
+    "opacity",
+    "borderRadius"
   ].includes(field)){
 
-    value = Number(value);
+    value =
+      Number(value);
 
   }
 
@@ -935,12 +1128,14 @@ function setField(field,value){
     "showSeconds"
   ].includes(field)){
 
-    value = !!value;
+    value =
+      !!value;
 
   }
 
 
-  w[field] = value;
+  w[field] =
+    value;
 
 
   if(
@@ -1017,19 +1212,31 @@ function renderList(){
         >
 
           <div class="widget-name">
-            <b>${escapeHtml(w.name)}</b>
+
+            <b>
+              ${escapeHtml(w.name)}
+            </b>
+
           </div>
 
           <div class="muted">
+
             ${
               w.type === "text"
+
               ? "Text"
+
+              : w.type === "blur"
+
+              ? "Blur"
+
               : (
                   w.mode === "countdown"
                   ? "Countdown"
                   : "Timer"
                 )
             }
+
           </div>
 
         </button>
@@ -1073,7 +1280,8 @@ function renderEditor(){
     );
 
 
-  const w = getSelected();
+  const w =
+    getSelected();
 
 
   if(!w){
@@ -1086,7 +1294,9 @@ function renderEditor(){
   }
 
 
-  /* TEXT */
+  /* =======================================================
+     TEXT
+     ======================================================= */
 
   if(w.type === "text"){
 
@@ -1139,7 +1349,311 @@ function renderEditor(){
   }
 
 
-  /* TIMER */
+  /* =======================================================
+     BLUR
+     ======================================================= */
+
+  if(w.type === "blur"){
+
+    el.innerHTML = `
+
+      <div class="stack">
+
+        <div class="field">
+
+          <label>Name</label>
+
+          <input
+            value="${escapeAttr(w.name)}"
+            oninput="
+              setField(
+                'name',
+                this.value
+              )
+            "
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Shape</label>
+
+          <select
+            onchange="
+              setField(
+                'shape',
+                this.value
+              )
+            "
+          >
+
+            <option
+              value="rectangle"
+              ${w.shape === "rectangle" ? "selected" : ""}
+            >
+              Rectangle
+            </option>
+
+            <option
+              value="square"
+              ${w.shape === "square" ? "selected" : ""}
+            >
+              Square
+            </option>
+
+            <option
+              value="circle"
+              ${w.shape === "circle" ? "selected" : ""}
+            >
+              Circle
+            </option>
+
+            <option
+              value="oval"
+              ${w.shape === "oval" ? "selected" : ""}
+            >
+              Oval
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="two">
+
+          <div class="field">
+
+            <label>X position (%)</label>
+
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="0.1"
+              value="${w.x}"
+              onchange="
+                setField(
+                  'x',
+                  this.value
+                )
+              "
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>Y position (%)</label>
+
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="0.1"
+              value="${w.y}"
+              onchange="
+                setField(
+                  'y',
+                  this.value
+                )
+              "
+            >
+
+          </div>
+
+        </div>
+
+
+        <div class="two">
+
+          <div class="field">
+
+            <label>Width (%)</label>
+
+            <input
+              type="number"
+              min="1"
+              max="100"
+              step="0.1"
+              value="${w.width}"
+              onchange="
+                setField(
+                  'width',
+                  this.value
+                )
+              "
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>Height (%)</label>
+
+            <input
+              type="number"
+              min="1"
+              max="100"
+              step="0.1"
+              value="${w.height}"
+              onchange="
+                setField(
+                  'height',
+                  this.value
+                )
+              "
+            >
+
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Blur strength:
+            <b id="blurValue">
+              ${w.blur}px
+            </b>
+          </label>
+
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="1"
+            value="${w.blur}"
+            oninput="
+              setField(
+                'blur',
+                this.value
+              )
+            "
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Boundary</label>
+
+          <select
+            onchange="
+              setField(
+                'boundary',
+                this.value
+              )
+            "
+          >
+
+            <option
+              value="hard"
+              ${w.boundary === "hard" ? "selected" : ""}
+            >
+              Hard
+            </option>
+
+            <option
+              value="soft"
+              ${w.boundary === "soft" ? "selected" : ""}
+            >
+              Soft
+            </option>
+
+            <option
+              value="extra-soft"
+              ${w.boundary === "extra-soft" ? "selected" : ""}
+            >
+              Extra Soft
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Blur opacity:
+            <b>
+              ${Math.round(
+                Number(w.opacity || 0) * 100
+              )}%
+            </b>
+          </label>
+
+          <input
+            type="range"
+            min="0"
+            max="0.3"
+            step="0.01"
+            value="${w.opacity}"
+            oninput="
+              setField(
+                'opacity',
+                this.value
+              )
+            "
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Border radius:
+            <b>
+              ${w.borderRadius}px
+            </b>
+          </label>
+
+          <input
+            type="range"
+            min="0"
+            max="100"
+            step="1"
+            value="${w.borderRadius}"
+            oninput="
+              setField(
+                'borderRadius',
+                this.value
+              )
+            "
+          >
+
+        </div>
+
+
+        <div class="notice">
+
+          The blur only affects the area underneath
+          this widget. Move and resize it until it
+          covers the part of your camera view you
+          want blurred.
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  /* =======================================================
+     TIMER / COUNTDOWN
+     ======================================================= */
 
   const isDown =
     w.mode === "countdown";
@@ -1365,10 +1879,12 @@ function renderEditor(){
         Current:
 
         <b id="editorTimerValue">
+
           ${formatTime(
             currentSeconds(w),
             w
           )}
+
         </b>
 
         ${
@@ -1537,7 +2053,8 @@ function styleFields(w){
 
 function changeTimerMode(mode){
 
-  const w = getSelected();
+  const w =
+    getSelected();
 
 
   if(
@@ -1548,11 +2065,14 @@ function changeTimerMode(mode){
   }
 
 
-  w.running = false;
+  w.running =
+    false;
 
-  w.startedAt = null;
+  w.startedAt =
+    null;
 
-  w.mode = mode;
+  w.mode =
+    mode;
 
 
   if(mode === "countdown"){
@@ -1566,7 +2086,8 @@ function changeTimerMode(mode){
 
   else{
 
-    w.pausedElapsed = 0;
+    w.pausedElapsed =
+      0;
 
     delete w.pausedRemaining;
 
@@ -1576,6 +2097,148 @@ function changeTimerMode(mode){
   saveLocal();
 
   renderAll();
+
+}
+
+
+/* =========================================================
+   BLUR STYLE
+   ========================================================= */
+
+function blurStyle(w){
+
+  let width =
+    Number(w.width) || 25;
+
+  let height =
+    Number(w.height) || 20;
+
+
+  /*
+    Square means equal dimensions.
+
+    We use the smaller dimension so the shape
+    remains genuinely square.
+  */
+
+  if(w.shape === "square"){
+
+    const size =
+      Math.min(
+        width,
+        height
+      );
+
+    width =
+      size;
+
+    height =
+      size;
+
+  }
+
+
+  if(w.shape === "circle"){
+
+    const size =
+      Math.min(
+        width,
+        height
+      );
+
+    width =
+      size;
+
+    height =
+      size;
+
+  }
+
+
+  let radius =
+    Number(w.borderRadius) || 0;
+
+
+  if(w.shape === "circle"){
+
+    radius =
+      50;
+
+  }
+
+  else if(w.shape === "oval"){
+
+    radius =
+      50;
+
+  }
+
+
+  return {
+
+    width,
+    height,
+    radius
+
+  };
+
+}
+
+
+/* =========================================================
+   BLUR PREVIEW
+   ========================================================= */
+
+function renderBlurPreview(w){
+
+  const shape =
+    blurStyle(w);
+
+
+  let boundaryClass =
+    "";
+
+
+  if(w.boundary === "soft"){
+
+    boundaryClass =
+      " soft";
+
+  }
+
+  else if(
+    w.boundary === "extra-soft"
+  ){
+
+    boundaryClass =
+      " soft-extra";
+
+  }
+
+
+  return `
+
+    <div
+      class="blur-widget${boundaryClass}"
+      style="
+        left:${Number(w.x) || 50}%;
+        top:${Number(w.y) || 50}%;
+
+        width:${shape.width}%;
+
+        height:${shape.height}%;
+
+        border-radius:${shape.radius}%;
+
+        --blur-amount:${Number(w.blur) || 0}px;
+
+        --blur-opacity:${Number(
+          w.opacity
+        ) || 0};
+      "
+    ></div>
+
+  `;
 
 }
 
@@ -1604,6 +2267,15 @@ function renderPreview(){
 
   el.innerHTML =
     widgets.map(w => {
+
+      /* BLUR */
+
+      if(w.type === "blur"){
+
+        return renderBlurPreview(w);
+
+      }
+
 
       let content = "";
 
@@ -1692,7 +2364,8 @@ function setStatus(text){
 
   document.getElementById(
     "status"
-  ).textContent = text;
+  ).textContent =
+    text;
 
 }
 
@@ -1714,7 +2387,8 @@ function clearAll(){
 
   widgets = [];
 
-  selectedId = null;
+  selectedId =
+    null;
 
   localStorage.removeItem(
     STORAGE_KEY
@@ -1735,29 +2409,9 @@ function clearAll(){
 
 function buildConfig(){
 
-  /*
-    THIS IS THE MAIN FIX.
-
-    We copy the LIVE timer state.
-
-    If a timer is running:
-
-      startedAt
-      running
-      pausedRemaining / pausedElapsed
-
-    are included in the URL.
-
-    Therefore the overlay does NOT receive a frozen
-    "remaining = 22963" value and stop.
-
-    Instead it receives the exact time at which the
-    timer started.
-  */
-
   return {
 
-    version:2,
+    version:4,
 
     widgets:
 
@@ -1774,10 +2428,6 @@ function buildConfig(){
         ){
 
           if(copy.running){
-
-            /*
-              Preserve the exact timestamp.
-            */
 
             copy.startedAt =
               Number(
@@ -1810,7 +2460,8 @@ function buildConfig(){
 
           else{
 
-            copy.startedAt = null;
+            copy.startedAt =
+              null;
 
           }
 
@@ -1842,9 +2493,11 @@ function encodeConfig(config){
     );
 
 
-  let binary = "";
+  let binary =
+    "";
 
-  const chunk = 0x8000;
+  const chunk =
+    0x8000;
 
 
   for(
@@ -1910,13 +2563,6 @@ function decodeConfig(encoded){
 
 async function copyPrismURL(){
 
-  /*
-    ALWAYS BUILD THE URL FROM THE CURRENT LIVE STATE.
-
-    This prevents the old frozen "remaining" value
-    problem.
-  */
-
   const config =
     buildConfig();
 
@@ -1969,17 +2615,12 @@ function initOverlay(){
 
   document.getElementById(
     "builder"
-  ).style.display = "none";
+  ).style.display =
+    "none";
 
 
   document.body.className =
     "overlay-body";
-
-
-  const params =
-    new URLSearchParams(
-      location.search
-    );
 
 
   const encoded =
@@ -2009,7 +2650,8 @@ function initOverlay(){
 
     document.getElementById(
       "overlay"
-    ).innerHTML = "";
+    ).innerHTML =
+      "";
 
     return;
 
@@ -2030,21 +2672,9 @@ function initOverlay(){
     config.widgets;
 
 
-  /*
-    The overlay runs its own clock.
-
-    It does NOT depend on the builder page.
-
-    It does NOT depend on localStorage.
-
-    It does NOT depend on the builder's timer.
-
-    It only needs:
-
-      startedAt
-      duration
-      running
-  */
+  /* =======================================================
+     DRAW OVERLAY
+     ======================================================= */
 
   function draw(){
 
@@ -2055,12 +2685,77 @@ function initOverlay(){
     overlay.innerHTML =
       list.map(w => {
 
-        let content = "";
+        /* BLUR */
+
+        if(w.type === "blur"){
+
+          const shape =
+            blurStyle(w);
 
 
-        if(
-          w.type === "text"
-        ){
+          let boundaryClass =
+            "";
+
+
+          if(
+            w.boundary === "soft"
+          ){
+
+            boundaryClass =
+              " soft";
+
+          }
+
+          else if(
+            w.boundary === "extra-soft"
+          ){
+
+            boundaryClass =
+              " soft-extra";
+
+          }
+
+
+          return `
+
+            <div
+              class="
+                blur-widget
+                ${boundaryClass}
+              "
+              style="
+                left:${Number(w.x) || 0}%;
+
+                top:${Number(w.y) || 0}%;
+
+                width:${shape.width}%;
+
+                height:${shape.height}%;
+
+                border-radius:${shape.radius}%;
+
+                --blur-amount:${Number(
+                  w.blur
+                ) || 0}px;
+
+                --blur-opacity:${Number(
+                  w.opacity
+                ) || 0};
+              "
+            ></div>
+
+          `;
+
+        }
+
+
+        /* TEXT / TIMER */
+
+        let content =
+          "";
+
+
+        if(w.type === "text"){
 
           content =
             w.text || "";
@@ -2085,12 +2780,15 @@ function initOverlay(){
             style="
               left:${Number(w.x) || 0}%;
               top:${Number(w.y) || 0}%;
+
               font-family:${escapeAttr(
                 w.font || "Inter"
               )};
+
               font-size:${Number(
                 w.size || 48
               )}px;
+
               color:${escapeAttr(
                 w.color || "#fff"
               )}
@@ -2110,13 +2808,6 @@ function initOverlay(){
 
   draw();
 
-
-  /*
-    Update four times per second.
-
-    The displayed value itself changes once per second,
-    but 250ms gives smoother response.
-  */
 
   setInterval(
     draw,
@@ -2156,14 +2847,6 @@ function formatOverlayTimer(
         Number(w.startedAt)
       )
     ){
-
-      /*
-        EXACT FIX:
-
-        Current remaining time is calculated from
-        the real current time minus the timestamp
-        stored when START was pressed.
-      */
 
       const elapsed =
         Math.floor(
@@ -2374,19 +3057,11 @@ if(
   )
 ){
 
-  /*
-    We are opening the special PRISM overlay URL.
-  */
-
   initOverlay();
 
 }
 
 else{
-
-  /*
-    Normal builder.
-  */
 
   loadLocal();
 
@@ -2418,7 +3093,7 @@ else{
 
 
   /*
-    Repair old saved widgets.
+    Repair old saved timer widgets.
   */
 
   widgets.forEach(w => {
@@ -2447,7 +3122,54 @@ else{
       )
     ){
 
-      w.pausedElapsed = 0;
+      w.pausedElapsed =
+        0;
+
+    }
+
+
+    /*
+      Repair blur widgets created by future/older
+      versions if any fields are missing.
+    */
+
+    if(w.type === "blur"){
+
+      if(!w.shape){
+        w.shape = "rectangle";
+      }
+
+      if(!Number.isFinite(Number(w.x))){
+        w.x = 50;
+      }
+
+      if(!Number.isFinite(Number(w.y))){
+        w.y = 50;
+      }
+
+      if(!Number.isFinite(Number(w.width))){
+        w.width = 25;
+      }
+
+      if(!Number.isFinite(Number(w.height))){
+        w.height = 20;
+      }
+
+      if(!Number.isFinite(Number(w.blur))){
+        w.blur = 18;
+      }
+
+      if(!w.boundary){
+        w.boundary = "hard";
+      }
+
+      if(!Number.isFinite(Number(w.opacity))){
+        w.opacity = 0.03;
+      }
+
+      if(!Number.isFinite(Number(w.borderRadius))){
+        w.borderRadius = 0;
+      }
 
     }
 
@@ -2456,10 +3178,6 @@ else{
 
   renderAll();
 
-
-  /*
-    Builder display refresh.
-  */
 
   setInterval(
     () => {
@@ -2490,22 +3208,20 @@ else{
           );
 
 
-        /*
-          Automatically stop a countdown
-          when it reaches zero.
-        */
-
         if(
           w.running &&
           w.mode === "countdown" &&
           currentSeconds(w) <= 0
         ){
 
-          w.running = false;
+          w.running =
+            false;
 
-          w.startedAt = null;
+          w.startedAt =
+            null;
 
-          w.pausedRemaining = 0;
+          w.pausedRemaining =
+            0;
 
           renderAll();
 
